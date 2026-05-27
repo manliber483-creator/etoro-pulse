@@ -787,6 +787,25 @@
     color: #b0bec9;
   }
 
+  /* ── DROP ZONE ── */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface2);
+  }
+  .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(0,229,160,0.04); }
+  .drop-zone-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .drop-zone-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .drop-zone-sub { font-size: 0.8rem; color: var(--muted); }
+  .img-preview-wrapper { position: relative; }
+  .img-preview-wrapper img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; border: 1px solid var(--border); }
+  .btn-remove-img { position: absolute; top: 12px; right: 12px; background: rgba(8,11,15,0.85); border: 1px solid var(--border); color: var(--warn); font-family: 'DM Mono', monospace; font-size: 0.7rem; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .btn-remove-img:hover { background: rgba(255,107,53,0.1); }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     header { padding: 16px 20px; }
@@ -927,21 +946,17 @@
 
     <div class="section-header">
       <div class="section-tag">// Análisis de Cartera</div>
-      <h1 class="section-title">¿Cómo está<br>tu cartera?</h1>
-      <p class="section-desc">Ingresá tus posiciones actuales y la IA te dirá qué mantener, reforzar, reducir o salir.</p>
+      <h1 class="section-title">Subí una foto<br>de tu cartera</h1>
+      <p class="section-desc">Sacá una captura de pantalla de tu cuenta de eToro y la IA te dice qué está bien, qué cambiar y qué salir.</p>
     </div>
 
     <div class="portfolio-form">
       <div class="backend-row">
-        <input type="url" id="backend-url-2" placeholder="https://tu-proyecto.vercel.app/api/report" value="">
+        <input type="url" id="backend-url-2" placeholder="https://etoro-pulse.vercel.app/api/report" value="">
         <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);white-space:nowrap;">URL del backend</span>
       </div>
 
-      <div class="config-grid" style="margin-bottom:20px;">
-        <div class="config-group">
-          <label>Capital total (USD)</label>
-          <input type="number" id="total-capital" placeholder="10000" min="0">
-        </div>
+      <div class="config-grid" style="margin-bottom:24px;">
         <div class="config-group">
           <label>Perfil de Riesgo</label>
           <select id="portfolio-risk">
@@ -958,52 +973,27 @@
             <option value="largo">Largo plazo</option>
           </select>
         </div>
+        <div class="config-group">
+          <label>Comentario opcional</label>
+          <input type="text" id="portfolio-comment" placeholder="Ej: quiero reducir riesgo">
+        </div>
       </div>
 
-      <div class="positions-table-wrapper">
-        <table class="positions-table">
-          <thead>
-            <tr>
-              <th>Ticker / Activo</th>
-              <th>Precio compra (USD)</th>
-              <th>Precio actual (USD)</th>
-              <th>Cantidad</th>
-              <th>% del portafolio</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="positions-body">
-            <tr>
-              <td><input type="text" placeholder="AAPL" class="ticker-input"></td>
-              <td><input type="number" placeholder="150.00" step="0.01" class="buy-input"></td>
-              <td><input type="number" placeholder="178.50" step="0.01" class="current-input"></td>
-              <td><input type="number" placeholder="10" step="0.01" class="qty-input"></td>
-              <td><input type="number" placeholder="25" step="0.1" class="pct-input"> %</td>
-              <td><button class="btn-remove-row" onclick="removeRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" placeholder="NVDA" class="ticker-input"></td>
-              <td><input type="number" placeholder="450.00" step="0.01" class="buy-input"></td>
-              <td><input type="number" placeholder="520.00" step="0.01" class="current-input"></td>
-              <td><input type="number" placeholder="5" step="0.01" class="qty-input"></td>
-              <td><input type="number" placeholder="35" step="0.1" class="pct-input"> %</td>
-              <td><button class="btn-remove-row" onclick="removeRow(this)">✕</button></td>
-            </tr>
-            <tr>
-              <td><input type="text" placeholder="MSFT" class="ticker-input"></td>
-              <td><input type="number" placeholder="320.00" step="0.01" class="buy-input"></td>
-              <td><input type="number" placeholder="415.00" step="0.01" class="current-input"></td>
-              <td><input type="number" placeholder="8" step="0.01" class="qty-input"></td>
-              <td><input type="number" placeholder="40" step="0.1" class="pct-input"> %</td>
-              <td><button class="btn-remove-row" onclick="removeRow(this)">✕</button></td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- DROP ZONE -->
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('img-input').click()">
+        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+        <div class="drop-zone-icon">📸</div>
+        <div class="drop-zone-title">Arrastrá o hacé click para subir</div>
+        <div class="drop-zone-sub">Captura de pantalla de tu cartera en eToro</div>
       </div>
 
-      <button class="btn-add-row" onclick="addRow()">+ Agregar posición</button>
+      <!-- PREVIEW -->
+      <div class="img-preview-wrapper" id="img-preview-wrapper" style="display:none">
+        <img id="img-preview" src="" alt="Preview">
+        <button class="btn-remove-img" onclick="removeImage()">✕ Cambiar imagen</button>
+      </div>
 
-      <button class="btn-generate" id="btn-portfolio" onclick="analyzePortfolio()">
+      <button class="btn-generate" id="btn-portfolio" onclick="analyzePortfolio()" style="margin-top:20px;">
         🔍 Analizar mi Cartera
       </button>
     </div>
@@ -1012,7 +1002,7 @@
     <div class="loading-state" id="portfolio-loading">
       <div class="loading-spinner"></div>
       <div class="loading-steps">
-        <div class="loading-step" id="pstep-1">📊 Procesando tus posiciones...</div>
+        <div class="loading-step" id="pstep-1">🖼️ Procesando tu captura...</div>
         <div class="loading-step" id="pstep-2">📡 Consultando contexto de mercado actual...</div>
         <div class="loading-step" id="pstep-3">🧠 Evaluando riesgo y diversificación...</div>
         <div class="loading-step" id="pstep-4">✍️ Generando recomendaciones...</div>
@@ -1271,30 +1261,61 @@ function renderReport(d) {
 }
 
 // ── PORTFOLIO ANALYSIS ──
+// ── IMAGE UPLOAD ──
+let selectedImageBase64 = null;
+let selectedImageType = null;
+
+function handleImageSelect(event) {
+  const file = event.target.files[0];
+  if (file) loadImage(file);
+}
+
+function loadImage(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const result = e.target.result;
+    selectedImageBase64 = result.split(',')[1];
+    selectedImageType = file.type;
+    document.getElementById('img-preview').src = result;
+    document.getElementById('img-preview-wrapper').style.display = 'block';
+    document.getElementById('drop-zone').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  selectedImageBase64 = null;
+  selectedImageType = null;
+  document.getElementById('img-preview-wrapper').style.display = 'none';
+  document.getElementById('drop-zone').style.display = 'block';
+  document.getElementById('img-input').value = '';
+}
+
+// Drag & drop
+const dropZone = document.getElementById('drop-zone');
+if (dropZone) {
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadImage(file);
+  });
+}
+
 async function analyzePortfolio() {
   const backendUrl = getBackendUrl('backend-url-2');
   if (!backendUrl) return;
 
-  // Collect positions
-  const rows = document.querySelectorAll('#positions-body tr');
-  const positions = [];
-  rows.forEach(row => {
-    const ticker = row.querySelector('.ticker-input')?.value.trim();
-    const buy = parseFloat(row.querySelector('.buy-input')?.value) || 0;
-    const current = parseFloat(row.querySelector('.current-input')?.value) || 0;
-    const qty = parseFloat(row.querySelector('.qty-input')?.value) || 0;
-    const pct = parseFloat(row.querySelector('.pct-input')?.value) || 0;
-    if (ticker) positions.push({ ticker, buy, current, qty, pct });
-  });
-
-  if (positions.length === 0) {
-    alert('⚠️ Ingresá al menos una posición.');
+  if (!selectedImageBase64) {
+    alert('⚠️ Primero subí una captura de pantalla de tu cartera en eToro.');
     return;
   }
 
-  const capital = document.getElementById('total-capital').value || 'no especificado';
   const risk = document.getElementById('portfolio-risk').value;
   const horizon = document.getElementById('portfolio-horizon').value;
+  const comment = document.getElementById('portfolio-comment').value;
 
   const btn = document.getElementById('btn-portfolio');
   const loading = document.getElementById('portfolio-loading');
@@ -1307,51 +1328,49 @@ async function analyzePortfolio() {
 
   const stepInterval = animateLoadingSteps('pstep-', 4);
 
-  const positionsText = positions.map(p => {
-    const pnlPct = p.buy > 0 ? (((p.current - p.buy) / p.buy) * 100).toFixed(1) : 'N/A';
-    return `- ${p.ticker}: compra $${p.buy} | actual $${p.current} | cantidad ${p.qty} | P&L ${pnlPct}% | ${p.pct}% del portafolio`;
-  }).join('\n');
+  const prompt = `Sos un analista financiero senior especializado en eToro. El inversor te mandó una captura de pantalla de su cartera actual.
 
-  const prompt = `Eres un analista financiero senior especializado en gestión de carteras de eToro. Analizá el siguiente portafolio:
-
-DATOS DEL INVERSOR:
-- Capital total: $${capital} USD
+CONTEXTO DEL INVERSOR:
 - Perfil de riesgo: ${risk}
-- Horizonte: ${horizon}
-- Fecha: ${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+- Horizonte de inversión: ${horizon}
+- Fecha de hoy: ${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}
+${comment ? `- Comentario del inversor: "${comment}"` : ''}
 
-POSICIONES ACTUALES:
-${positionsText}
+Analizá todas las posiciones que ves en la imagen. Para cada una evaluá si conviene mantener, reforzar, reducir o salir, basándote en el contexto actual del mercado.
 
-Basándote en el mercado actual y las noticias de esta semana, analizá cada posición y el portafolio en general.
-
-Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown):
+Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
 {
-  "score_general": 7.5 (número del 1 al 10 indicando salud del portafolio),
+  "score_general": 7.5,
   "diversificacion": "Alta" | "Media" | "Baja",
-  "riesgo_real": "Conservador" | "Moderado" | "Agresivo" (riesgo real según las posiciones),
-  "resumen_general": "2-3 oraciones sobre el estado general del portafolio",
+  "riesgo_real": "Conservador" | "Moderado" | "Agresivo",
+  "resumen_general": "2-3 oraciones sobre el estado general del portafolio que ves en la imagen",
   "posiciones": [
     {
       "ticker": "AAPL",
+      "nombre": "Apple Inc.",
       "verdict": "mantener" | "reforzar" | "reducir" | "salir",
-      "analisis": "2-3 oraciones específicas sobre esta posición ahora mismo, contexto actual",
-      "razon": "La razón principal en una línea"
+      "analisis": "2-3 oraciones sobre esta posición con contexto actual del mercado",
+      "razon": "Razón principal en una línea"
     }
-  ] (una entrada por cada posición ingresada),
+  ],
   "recomendaciones": [
     "Recomendación accionable 1",
     "Recomendación accionable 2",
     "Recomendación accionable 3"
   ],
-  "alerta": "Si hay una alerta urgente, escribila acá. Si no hay, null"
+  "alerta": "Alerta urgente si la hay, o null"
 }`;
 
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, useWebSearch: true })
+      body: JSON.stringify({
+        prompt,
+        image: selectedImageBase64,
+        imageType: selectedImageType,
+        useWebSearch: true
+      })
     });
 
     if (!response.ok) throw new Error(`Error ${response.status}`);
@@ -1372,7 +1391,7 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown):
       return;
     }
 
-    renderPortfolio(parsed, positions);
+    renderPortfolio(parsed);
 
   } catch (err) {
     clearInterval(stepInterval);
@@ -1383,29 +1402,20 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown):
   }
 }
 
-function renderPortfolio(d, positions) {
+function renderPortfolio(d) {
   const scoreClass = d.score_general >= 7 ? 'score-high' : d.score_general >= 5 ? 'score-mid' : 'score-low';
 
-  const positionsHTML = (d.posiciones || []).map(p => {
-    const original = positions.find(pos => pos.ticker.toUpperCase() === p.ticker.toUpperCase());
-    const pnlPct = original && original.buy > 0
-      ? (((original.current - original.buy) / original.buy) * 100).toFixed(1)
-      : null;
-    const pnlClass = pnlPct > 0 ? 'pos' : 'neg';
-    const pnlLabel = pnlPct !== null ? `${pnlPct > 0 ? '+' : ''}${pnlPct}% P&L` : '';
-
-    return `
-      <div class="position-analysis-card fade-up-d1">
-        <div class="pa-ticker-block">
-          <div class="pa-ticker">${p.ticker}</div>
-          ${pnlLabel ? `<div class="pa-pnl ${pnlClass}">${pnlLabel}</div>` : ''}
-          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:4px;">${p.razon}</div>
-        </div>
-        <div class="pa-analysis">${p.analisis}</div>
-        <div class="pa-verdict ${p.verdict}">${p.verdict.toUpperCase()}</div>
+  const positionsHTML = (d.posiciones || []).map(p => `
+    <div class="position-analysis-card fade-up-d1">
+      <div class="pa-ticker-block">
+        <div class="pa-ticker">${p.ticker}</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:0.75rem;color:var(--muted);margin-top:2px;">${p.nombre || ''}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:6px;">${p.razon}</div>
       </div>
-    `;
-  }).join('');
+      <div class="pa-analysis">${p.analisis}</div>
+      <div class="pa-verdict ${p.verdict}">${p.verdict.toUpperCase()}</div>
+    </div>
+  `).join('');
 
   const recosHTML = (d.recomendaciones || []).map((r, i) => `
     <div class="insight-item">
@@ -1417,10 +1427,7 @@ function renderPortfolio(d, positions) {
   const alertHTML = d.alerta ? `
     <div class="risk-banner fade-up-d3" style="margin-bottom:32px;">
       <div class="risk-icon">🚨</div>
-      <div>
-        <div class="risk-title">Alerta</div>
-        <div class="risk-text">${d.alerta}</div>
-      </div>
+      <div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div>
     </div>
   ` : '';
 
@@ -1440,14 +1447,10 @@ function renderPortfolio(d, positions) {
         <div class="pm-value" style="font-size:1.2rem;color:var(--text);">${d.riesgo_real}</div>
       </div>
     </div>
-
     <div class="summary-block fade-up" style="margin-bottom:32px;">${d.resumen_general}</div>
-
     ${alertHTML}
-
     <div class="ideas-label fade-up">📊 Análisis por posición</div>
     <div class="position-analysis-list">${positionsHTML}</div>
-
     <div class="ideas-label fade-up">✅ Recomendaciones</div>
     <div class="insights-list" style="margin-bottom:0;">${recosHTML}</div>
   `;
