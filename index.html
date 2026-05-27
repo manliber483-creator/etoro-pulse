@@ -874,12 +874,7 @@
     </div>
 
     <div class="config-card">
-      <div class="backend-row">
-        <input type="url" id="backend-url" placeholder="https://tu-proyecto.vercel.app/api/report" value="">
-        <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);white-space:nowrap;">URL del backend</span>
-      </div>
-
-      <div class="config-grid">
+<div class="config-grid">
         <div class="config-group">
           <label>Mercado</label>
           <select id="region">
@@ -951,12 +946,7 @@
     </div>
 
     <div class="portfolio-form">
-      <div class="backend-row">
-        <input type="url" id="backend-url-2" placeholder="https://etoro-pulse.vercel.app/api/report" value="">
-        <span style="font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);white-space:nowrap;">URL del backend</span>
-      </div>
-
-      <div class="config-grid" style="margin-bottom:24px;">
+<div class="config-grid" style="margin-bottom:24px;">
         <div class="config-group">
           <label>Perfil de Riesgo</label>
           <select id="portfolio-risk">
@@ -1074,19 +1064,25 @@ function animateLoadingSteps(prefix, count) {
   return interval;
 }
 
-// ── GET BACKEND URL ──
-function getBackendUrl(id) {
-  const url = document.getElementById(id).value.trim();
-  if (!url) {
-    alert('⚠️ Primero ingresá la URL de tu backend.');
-    return null;
+// ── BACKEND URL (hardcodeada) ──
+const BACKEND_URL = 'https://etoro-pulse.vercel.app/api/report';
+function getBackendUrl() { return BACKEND_URL; }
+
+// ── PARSE JSON robusto ──
+function extractJSON(text) {
+  text = text.replace(/```json|```/g, '').trim();
+  try { return JSON.parse(text); } catch {}
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start !== -1 && end !== -1) {
+    try { return JSON.parse(text.slice(start, end + 1)); } catch {}
   }
-  return url;
+  return null;
 }
 
 // ── WEEKLY REPORT ──
 async function generateReport() {
-  const backendUrl = getBackendUrl('backend-url');
+  const backendUrl = getBackendUrl();
   if (!backendUrl) return;
 
   const region = document.getElementById('region').value;
@@ -1157,8 +1153,8 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown, sin 
 
     let parsed;
     try {
-      const clean = text.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
+      parsed = extractJSON(text);
+      if (!parsed) throw new Error('no-json');
     } catch {
       // Render raw if not JSON
       output.innerHTML = `<div class="summary-block">${text.replace(/\n/g,'<br>')}</div>`;
@@ -1305,7 +1301,7 @@ if (dropZone) {
 }
 
 async function analyzePortfolio() {
-  const backendUrl = getBackendUrl('backend-url-2');
+  const backendUrl = getBackendUrl();
   if (!backendUrl) return;
 
   if (!selectedImageBase64) {
@@ -1383,8 +1379,8 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
 
     let parsed;
     try {
-      const clean = text.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
+      parsed = extractJSON(text);
+      if (!parsed) throw new Error('no-json');
     } catch {
       output.innerHTML = `<div class="summary-block">${text.replace(/\n/g,'<br>')}</div>`;
       output.classList.add('visible');
