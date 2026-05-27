@@ -1179,23 +1179,6 @@ function renderReport(d) {
   const sp500Color = d.sp500_semanal?.startsWith('-') ? 'down' : 'up';
   const nasdaqColor = d.nasdaq_semanal?.startsWith('-') ? 'down' : 'up';
 
-  const ideasHTML = (d.ideas || []).map(idea => `
-    <div class="idea-card fade-up-d1">
-      <div class="idea-header">
-        <div>
-          <div class="idea-ticker">${idea.ticker}</div>
-          <div class="idea-name">${idea.nombre}</div>
-        </div>
-        <div class="idea-action ${idea.accion?.toLowerCase()}">${idea.accion?.toUpperCase()}</div>
-      </div>
-      <div class="idea-thesis">${idea.tesis}</div>
-      <div class="idea-footer">
-        <div class="idea-catalyst">⚡ ${idea.catalizador}</div>
-        <div class="idea-popularity">👥 ${idea.popularidad_etoro}</div>
-      </div>
-    </div>
-  `).join('');
-
   const insightsHTML = (d.insights || []).map((ins, i) => `
     <div class="insight-item fade-up-d2">
       <div class="insight-num">0${i+1}</div>
@@ -1207,6 +1190,26 @@ function renderReport(d) {
   `).join('');
 
   const sectorsHTML = (d.sectores || []).map(s => `<div class="sector-tag">${s}</div>`).join('');
+
+  // Render ideas with placeholder for Stocktwits
+  const ideasHTML = (d.ideas || []).map(idea => `
+    <div class="idea-card fade-up-d1" id="card-${idea.ticker}">
+      <div class="idea-header">
+        <div>
+          <div class="idea-ticker">${idea.ticker}</div>
+          <div class="idea-name">${idea.nombre}</div>
+        </div>
+        <div class="idea-action ${idea.accion?.toLowerCase()}">${idea.accion?.toUpperCase()}</div>
+      </div>
+      <div class="idea-thesis">${idea.tesis}</div>
+      <div class="idea-footer">
+        <div class="idea-catalyst">⚡ ${idea.catalizador}</div>
+        <div class="st-sentiment" id="st-${idea.ticker}">
+          <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">⏳ Cargando Stocktwits...</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
 
   const output = document.getElementById('report-output');
   output.innerHTML = `
@@ -1254,6 +1257,55 @@ function renderReport(d) {
     <div class="sectors-row fade-up-d4">${sectorsHTML}</div>
   `;
   output.classList.add('visible');
+
+  // Load Stocktwits sentiment for each ticker
+  (d.ideas || []).forEach(idea => loadStocktwits(idea.ticker));
+}
+
+// ── STOCKTWITS SENTIMENT ──
+async function loadStocktwits(ticker) {
+  const el = document.getElementById('st-' + ticker);
+  if (!el) return;
+
+  try {
+    const res = await fetch(`https://api.stocktwits.com/api/2/streams/symbol/${ticker}.json`);
+    if (!res.ok) throw new Error('no data');
+    const data = await res.json();
+
+    const messages = data.messages || [];
+    if (messages.length === 0) throw new Error('no messages');
+
+    let bullish = 0, bearish = 0;
+    messages.forEach(m => {
+      if (m.entities?.sentiment?.basic === 'Bullish') bullish++;
+      if (m.entities?.sentiment?.basic === 'Bearish') bearish++;
+    });
+
+    const total = bullish + bearish;
+    const bullPct = total > 0 ? Math.round((bullish / total) * 100) : null;
+    const bearPct = total > 0 ? 100 - bullPct : null;
+
+    if (bullPct === null) {
+      el.innerHTML = `<span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">💬 ${messages.length} menciones en Stocktwits</span>`;
+      return;
+    }
+
+    const color = bullPct >= 60 ? 'var(--accent)' : bullPct <= 40 ? 'var(--warn)' : '#f0c040';
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:4px;width:100%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);">STOCKTWITS</span>
+          <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:${color};">${bullPct}% bullish</span>
+        </div>
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+          <div style="height:100%;width:${bullPct}%;background:${color};border-radius:2px;transition:width 0.8s ease;"></div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);">🐂 ${bullish} alcistas · 🐻 ${bearish} bajistas · ${messages.length} msgs</div>
+      </div>
+    `;
+  } catch {
+    el.innerHTML = `<span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">📊 Stocktwits no disponible</span>`;
+  }
 }
 
 // ── PORTFOLIO ANALYSIS ──
