@@ -513,6 +513,77 @@
     color: var(--accent2);
   }
 
+  /* ── RICH INSIGHTS ── */
+  .insight-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .insight-bullets { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .insight-bullet { font-size: 0.8rem; color: #9ab0c0; line-height: 1.5; }
+  .insight-bullet-impact { color: var(--accent); }
+
+  .insight-why {
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: rgba(0,144,255,0.05);
+    border-left: 2px solid var(--accent2);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .why-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-right: 6px;
+  }
+
+  .insight-source-row { display: flex; align-items: center; gap: 8px; }
+
+  .insight-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    text-decoration: none;
+    border: 1px solid rgba(0,144,255,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    transition: all 0.15s;
+  }
+  .insight-link:hover { background: rgba(0,144,255,0.1); }
+
+  /* ── PERFIL BLOCK ── */
+  .perfil-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(0,229,160,0.05);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+  }
+
+  .perfil-icon { font-size: 1.2rem; }
+  .perfil-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .perfil-text { font-size: 0.85rem; color: #b0bec9; line-height: 1.6; }
+
   /* ── INSIGHTS ── */
   .insights-list {
     display: flex;
@@ -1296,7 +1367,7 @@ async function generateReport() {
 
   const stepInterval = animateLoadingSteps('step-', 4);
 
-  const prompt = `Analista financiero senior. Buscá datos reales de hoy ${new Date().toLocaleDateString('es-AR')} y generá informe para mercado ${region}, riesgo ${risk}, horizonte ${horizon}, enfoques: ${chips.join(', ')}.
+  const prompt = `Analista financiero senior. Buscá datos reales de hoy ${new Date().toLocaleDateString('es-AR')} y generá informe personalizado para inversor con perfil ${risk}, horizonte ${horizon}, mercado ${region}, enfoques: ${chips.join(', ')}.
 
 Respondé SOLO con JSON (sin markdown):
 {
@@ -1304,11 +1375,12 @@ Respondé SOLO con JSON (sin markdown):
   "sp500_semanal": "+1.2%",
   "vix": "18.5",
   "nasdaq_semanal": "+0.8%",
-  "resumen": "2-3 oraciones del mercado actual",
-  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real"}],
-  "insights": [{"texto":"insight real","fuente":"fuente"}],
+  "resumen": "2-3 oraciones del mercado actual mencionando el perfil ${risk} del inversor",
+  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real","por_que_importa":"explicación simple en 1 oración de por qué esto importa para un inversor común","url_fuente":"https://url-real-si-existe.com"}],
+  "insights": [{"titulo":"Título corto impactante","bullet1":"dato clave 1","bullet2":"dato clave 2","bullet3":"impacto para inversor","fuente":"Fuente real","url":"https://url-si-existe.com","por_que_importa":"explicación simple del término o concepto en 1 oración"}],
   "riesgo_semana": "riesgo actual",
-  "sectores": ["Sector1","Sector2"]
+  "sectores": ["Sector1","Sector2"],
+  "para_tu_perfil": "1-2 oraciones específicas para perfil ${risk} con horizonte ${horizon} basadas en el contexto actual"
 }`;
 
   try {
@@ -1354,19 +1426,27 @@ function renderReport(d) {
   const sp500Color = d.sp500_semanal?.startsWith('-') ? 'down' : 'up';
   const nasdaqColor = d.nasdaq_semanal?.startsWith('-') ? 'down' : 'up';
 
+  // Rich scannable insights
   const insightsHTML = (d.insights || []).map((ins, i) => `
     <div class="insight-item fade-up-d2">
       <div class="insight-num">0${i+1}</div>
-      <div>
-        <div class="insight-text">${ins.texto}</div>
-        <div class="insight-source">Fuente: ${ins.fuente}</div>
+      <div style="flex:1;">
+        <div class="insight-title">${ins.titulo || ins.texto || ''}</div>
+        ${ins.bullet1 ? `<div class="insight-bullets">
+          <div class="insight-bullet">→ ${ins.bullet1}</div>
+          ${ins.bullet2 ? `<div class="insight-bullet">→ ${ins.bullet2}</div>` : ''}
+          ${ins.bullet3 ? `<div class="insight-bullet insight-bullet-impact">⚡ ${ins.bullet3}</div>` : ''}
+        </div>` : ''}
+        ${ins.por_que_importa ? `<div class="insight-why"><span class="why-label">¿Por qué importa?</span> ${ins.por_que_importa}</div>` : ''}
+        <div class="insight-source-row">
+          ${ins.url ? `<a href="${ins.url}" target="_blank" class="insight-link">🔗 ${ins.fuente}</a>` : `<span class="insight-source">${ins.fuente || ''}</span>`}
+        </div>
       </div>
     </div>
   `).join('');
 
   const sectorsHTML = (d.sectores || []).map(s => `<div class="sector-tag">${s}</div>`).join('');
 
-  // Render ideas with placeholder for Stocktwits
   const tendenciaLabel = t => t === 'positiva' ? '↑ Tendencia positiva' : t === 'negativa' ? '↓ Tendencia negativa' : '→ Tendencia neutral';
   const accionLabel = a => ({ comprar: 'Interés alto', mantener: 'Interés moderado', reducir: 'Señal de cautela', vender: 'Señal de salida' })[a] || a;
 
@@ -1382,11 +1462,14 @@ function renderReport(d) {
       <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:${idea.tendencia==='positiva'?'var(--accent)':idea.tendencia==='negativa'?'var(--warn)':'var(--accent2)'};margin-bottom:10px;">${tendenciaLabel(idea.tendencia)}</div>
       <div class="idea-thesis">${idea.tesis}</div>
       ${idea.senales?.length ? `<div class="idea-signals"><div class="signals-label">Señales detectadas</div>${idea.senales.map(s=>`<div class="signal-item">→ ${s}</div>`).join('')}</div>` : ''}
-      ${idea.fuentes?.length ? `<div class="idea-sources-row">${idea.fuentes.map(f=>`<span class="idea-source-tag">${f}</span>`).join('')}</div>` : ''}
+      ${idea.por_que_importa ? `<div class="insight-why" style="margin:8px 0;"><span class="why-label">¿Por qué importa?</span> ${idea.por_que_importa}</div>` : ''}
       <div class="idea-footer">
         <div class="idea-catalyst">⚡ ${idea.catalizador}</div>
-        <div class="st-sentiment" id="st-${idea.ticker}">
-          <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.65rem;">⏳ Cargando Stocktwits...</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${idea.fuentes?.map(f => idea.url_fuente ? `<a href="${idea.url_fuente}" target="_blank" class="insight-link" style="font-size:0.6rem;">🔗 ${f}</a>` : `<span class="idea-source-tag">${f}</span>`).join('') || ''}
+          <div class="st-sentiment" id="st-${idea.ticker}">
+            <span style="color:var(--muted);font-family:'DM Mono',monospace;font-size:0.6rem;">⏳ ST...</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1420,6 +1503,11 @@ function renderReport(d) {
 
     <div class="summary-block fade-up">${d.resumen}</div>
 
+    ${d.para_tu_perfil ? `<div class="perfil-block fade-up">
+      <div class="perfil-icon">👤</div>
+      <div><div class="perfil-label">Para tu perfil</div><div class="perfil-text">${d.para_tu_perfil}</div></div>
+    </div>` : ''}
+
     <div class="ideas-label fade-up">💡 Ideas de la semana</div>
     <div class="ideas-grid">${ideasHTML}</div>
 
@@ -1439,7 +1527,6 @@ function renderReport(d) {
   `;
   output.classList.add('visible');
 
-  // Load Stocktwits sentiment for each ticker
   (d.ideas || []).forEach(idea => loadStocktwits(idea.ticker));
 }
 
