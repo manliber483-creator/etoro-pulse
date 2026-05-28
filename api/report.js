@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 2000,
+        max_tokens: 4000,
         system: 'Sos un analista financiero senior. SIEMPRE respondés ÚNICAMENTE con JSON puro, sin texto antes ni después, sin markdown, sin explicaciones. Solo el objeto JSON.',
         messages: [{ role: 'user', content }],
         ...(tools && { tools }),
