@@ -787,6 +787,47 @@
     color: #b0bec9;
   }
 
+  .idea-signals {
+    margin: 10px 0;
+    padding: 10px 14px;
+    background: rgba(0,229,160,0.04);
+    border-left: 2px solid var(--accent);
+    border-radius: 6px;
+  }
+  .signals-label { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .signal-item { font-size: 0.78rem; color: #9ab0c0; padding: 2px 0; line-height: 1.5; }
+  .idea-sources-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .idea-source-tag { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--accent2); background: rgba(0,144,255,0.08); border: 1px solid rgba(0,144,255,0.2); padding: 2px 8px; border-radius: 20px; }
+
+  .sources-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sources-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  .source-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    background: rgba(0,144,255,0.08);
+    border: 1px solid rgba(0,144,255,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
   /* ── HOW IT WORKS ── */
   .how-it-works {
     display: flex;
@@ -968,13 +1009,22 @@
 
     <div class="section-header">
       <div class="section-tag">// Inteligencia de Mercado IA</div>
-      <h1 class="section-title">Detectá oportunidades<br>antes que el mercado</h1>
-      <p class="section-desc">Recibí un informe generado con IA que analiza <strong>noticias financieras recientes</strong>, <strong>sentimiento del mercado</strong> y <strong>tendencias de sectores</strong> para identificar movimientos relevantes — no promesas, información accionable.</p>
+      <h1 class="section-title">Detectá movimientos<br>relevantes del mercado</h1>
+      <p class="section-desc">La IA resume tendencias y señales del mercado usando noticias públicas y actividad social — <strong>no da asesoramiento financiero</strong>, te ahorra horas de análisis.</p>
       <div class="how-it-works">
-        <div class="hiw-item"><span class="hiw-icon">📡</span><span>Noticias financieras en tiempo real</span></div>
-        <div class="hiw-item"><span class="hiw-icon">📊</span><span>Sentimiento del mercado vía Stocktwits</span></div>
-        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>IA que sintetiza y explica</span></div>
-        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resultado claro y accionable</span></div>
+        <div class="hiw-item"><span class="hiw-icon">📡</span><span>Noticias en tiempo real</span></div>
+        <div class="hiw-item"><span class="hiw-icon">📊</span><span>Sentimiento Stocktwits</span></div>
+        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>IA que sintetiza</span></div>
+        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resumen accionable</span></div>
+      </div>
+      <div class="sources-strip">
+        <span class="sources-label">Fuentes:</span>
+        <span class="source-tag">Reuters</span>
+        <span class="source-tag">Yahoo Finance</span>
+        <span class="source-tag">Bloomberg</span>
+        <span class="source-tag">Stocktwits</span>
+        <span class="source-tag">SEC Filings</span>
+        <span class="source-tag">Earnings calls</span>
       </div>
     </div>
 
@@ -1256,10 +1306,12 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown, sin 
     {
       "ticker": "AAPL",
       "nombre": "Apple Inc.",
-      "accion": "comprar" | "mantener" | "vender",
-      "tesis": "2-3 oraciones con la tesis de inversión",
-      "catalizador": "El catalizador clave esta semana",
-      "popularidad_etoro": "TOP 5 en eToro" (o similar)
+      "tendencia": "positiva" | "negativa" | "neutral",
+      "accion": "comprar" | "mantener" | "reducir",
+      "tesis": "2-3 oraciones con análisis objetivo de la situación actual",
+      "senales": ["Señal concreta 1", "Señal concreta 2", "Señal concreta 3"],
+      "fuentes": ["Reuters", "Bloomberg"],
+      "catalizador": "El catalizador o evento clave de esta semana"
     }
   ] (4 ideas),
   "insights": [
@@ -1328,6 +1380,9 @@ function renderReport(d) {
   const sectorsHTML = (d.sectores || []).map(s => `<div class="sector-tag">${s}</div>`).join('');
 
   // Render ideas with placeholder for Stocktwits
+  const tendenciaLabel = t => t === 'positiva' ? '↑ Tendencia positiva' : t === 'negativa' ? '↓ Tendencia negativa' : '→ Tendencia neutral';
+  const accionLabel = a => ({ comprar: 'Interés alto', mantener: 'Interés moderado', reducir: 'Señal de cautela', vender: 'Señal de salida' })[a] || a;
+
   const ideasHTML = (d.ideas || []).map(idea => `
     <div class="idea-card fade-up-d1" id="card-${idea.ticker}">
       <div class="idea-header">
@@ -1335,9 +1390,12 @@ function renderReport(d) {
           <div class="idea-ticker">${idea.ticker}</div>
           <div class="idea-name">${idea.nombre}</div>
         </div>
-        <div class="idea-action ${idea.accion?.toLowerCase()}">${idea.accion?.toUpperCase()}</div>
+        <div class="idea-action ${idea.accion?.toLowerCase()}">${accionLabel(idea.accion)}</div>
       </div>
+      <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:${idea.tendencia==='positiva'?'var(--accent)':idea.tendencia==='negativa'?'var(--warn)':'var(--accent2)'};margin-bottom:10px;">${tendenciaLabel(idea.tendencia)}</div>
       <div class="idea-thesis">${idea.tesis}</div>
+      ${idea.senales?.length ? `<div class="idea-signals"><div class="signals-label">Señales detectadas</div>${idea.senales.map(s=>`<div class="signal-item">→ ${s}</div>`).join('')}</div>` : ''}
+      ${idea.fuentes?.length ? `<div class="idea-sources-row">${idea.fuentes.map(f=>`<span class="idea-source-tag">${f}</span>`).join('')}</div>` : ''}
       <div class="idea-footer">
         <div class="idea-catalyst">⚡ ${idea.catalizador}</div>
         <div class="st-sentiment" id="st-${idea.ticker}">
