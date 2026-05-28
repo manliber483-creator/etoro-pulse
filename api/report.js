@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 2000,
-        system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Usás datos reales del mercado actual para tu análisis.',
+        system: 'Sos un analista financiero senior. SIEMPRE respondés ÚNICAMENTE con JSON puro, sin texto antes ni después, sin markdown, sin explicaciones. Solo el objeto JSON.',
         messages: [{ role: 'user', content }],
         ...(tools && { tools }),
       }),
