@@ -8,7 +8,6 @@ export default async function handler(req, res) {
 
   const { prompt, image, imageType } = req.body;
 
-  // Build message content
   let content;
   if (image) {
     content = [
@@ -18,6 +17,10 @@ export default async function handler(req, res) {
   } else {
     content = prompt;
   }
+
+  // Use web search for reports, not for portfolio image analysis
+  const useSearch = !image;
+  const tools = useSearch ? [{ type: 'web_search_20250305', name: 'web_search' }] : undefined;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -30,8 +33,9 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 2000,
-        system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Usás los datos reales provistos para tu análisis.',
+        system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Usás datos reales del mercado actual para tu análisis.',
         messages: [{ role: 'user', content }],
+        ...(tools && { tools }),
       }),
     });
 
