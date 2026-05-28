@@ -1256,12 +1256,21 @@ function getBackendUrl() { return BACKEND_URL; }
 
 // ── PARSE JSON robusto ──
 function extractJSON(text) {
+  if (!text) return null;
+  // Remove markdown fences
   text = text.replace(/```json|```/g, '').trim();
+  // Try direct parse
   try { return JSON.parse(text); } catch {}
+  // Find first { and last } 
   const start = text.indexOf('{');
   const end = text.lastIndexOf('}');
-  if (start !== -1 && end !== -1) {
+  if (start !== -1 && end !== -1 && end > start) {
     try { return JSON.parse(text.slice(start, end + 1)); } catch {}
+  }
+  // Try to find JSON array
+  const astart = text.indexOf('[');
+  if (astart !== -1) {
+    try { return JSON.parse(text.slice(astart)); } catch {}
   }
   return null;
 }
