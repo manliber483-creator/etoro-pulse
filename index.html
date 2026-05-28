@@ -1466,18 +1466,35 @@ async function generateReport() {
 
   const prompt = `Analista financiero senior. Buscá datos reales de hoy ${new Date().toLocaleDateString('es-AR')} y generá informe personalizado para inversor con perfil ${risk}, horizonte ${horizon}, mercado ${region}, enfoques: ${chips.join(', ')}.
 
+IMPORTANTE: El campo "score" (número del 1 al 100) y "radar" (objeto con 5 valores del 1 al 100) son OBLIGATORIOS en cada idea. Sin ellos el informe no funciona.
+
 Respondé SOLO con JSON (sin markdown):
 {
   "sentimiento": "bullish"|"bearish"|"neutral",
   "sp500_semanal": "+1.2%",
   "vix": "18.5",
   "nasdaq_semanal": "+0.8%",
-  "frase_resumen": "Una frase corta e impactante que resume el mercado esta semana (máximo 15 palabras)",
-  "cambios_semana": ["Evento 1 que cambió el mercado", "Evento 2", "Evento 3"],
-  "resumen": "2-3 oraciones del mercado actual mencionando el perfil ${risk} del inversor",
-  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","score":85,"tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real","por_que_importa":"explicación simple en 1 oración","url_fuente":"https://url-real-si-existe.com","radar":{"momentum":75,"sentimiento":80,"riesgo":40,"hype":70,"institucional":85}}],
-  "insights": [{"titulo":"Título corto impactante","bullet1":"dato clave 1","bullet2":"dato clave 2","bullet3":"impacto para inversor","fuente":"Fuente real","url":"https://url-si-existe.com","por_que_importa":"explicación simple del término o concepto en 1 oración"}],
-  "riesgo_semana": "riesgo actual",
+  "frase_resumen": "Una frase corta e impactante que resume el mercado (máximo 15 palabras)",
+  "cambios_semana": ["Evento 1 que cambió el mercado esta semana", "Evento 2", "Evento 3"],
+  "resumen": "2-3 oraciones del mercado actual mencionando el perfil ${risk}",
+  "ideas": [
+    {
+      "ticker": "NVDA",
+      "nombre": "NVIDIA Corp.",
+      "score": 85,
+      "tendencia": "positiva"|"negativa"|"neutral",
+      "accion": "comprar"|"mantener"|"reducir",
+      "tesis": "análisis real basado en datos",
+      "senales": ["señal concreta 1", "señal concreta 2", "señal concreta 3"],
+      "fuentes": ["Reuters", "Bloomberg"],
+      "catalizador": "catalizador real de esta semana",
+      "por_que_importa": "explicación simple en 1 oración para inversor común",
+      "url_fuente": "https://url-real.com",
+      "radar": {"momentum": 80, "sentimiento": 75, "riesgo": 35, "hype": 70, "institucional": 85}
+    }
+  ],
+  "insights": [{"titulo":"Título corto impactante","bullet1":"dato clave 1","bullet2":"dato clave 2","bullet3":"impacto para inversor","fuente":"Fuente real","url":"https://url.com","por_que_importa":"explicación simple del concepto"}],
+  "riesgo_semana": "riesgo basado en datos actuales",
   "sectores": ["Sector1","Sector2"],
   "para_tu_perfil": "1-2 oraciones específicas para perfil ${risk} con horizonte ${horizon}"
 }`;
