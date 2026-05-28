@@ -1287,36 +1287,19 @@ async function generateReport() {
 
   const stepInterval = animateLoadingSteps('step-', 4);
 
-  const prompt = `Sos un analista financiero senior. Buscá datos reales del mercado de hoy (${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}) y generá un informe semanal.
+  const prompt = `Analista financiero senior. Buscá datos reales de hoy ${new Date().toLocaleDateString('es-AR')} y generá informe para mercado ${region}, riesgo ${risk}, horizonte ${horizon}, enfoques: ${chips.join(', ')}.
 
-CONFIGURACIÓN:
-- Mercado: ${region}
-- Perfil de riesgo: ${risk}
-- Horizonte: ${horizon}
-- Enfoques: ${chips.join(', ')}
-
-Buscá el S&P 500, NASDAQ, VIX y noticias financieras de esta semana. Respondé ÚNICAMENTE con JSON (sin markdown):
+Respondé SOLO con JSON (sin markdown):
 {
   "sentimiento": "bullish"|"bearish"|"neutral",
   "sp500_semanal": "+1.2%",
   "vix": "18.5",
   "nasdaq_semanal": "+0.8%",
-  "resumen": "2-3 oraciones basadas en datos reales",
-  "ideas": [
-    {
-      "ticker": "NVDA",
-      "nombre": "NVIDIA Corp.",
-      "tendencia": "positiva"|"negativa"|"neutral",
-      "accion": "comprar"|"mantener"|"reducir",
-      "tesis": "2-3 oraciones con datos reales",
-      "senales": ["Señal 1 con dato real", "Señal 2", "Señal 3"],
-      "fuentes": ["Reuters", "Bloomberg"],
-      "catalizador": "Catalizador concreto de esta semana"
-    }
-  ],
-  "insights": [{"texto": "Insight real", "fuente": "Fuente real"}],
-  "riesgo_semana": "Riesgo basado en noticias actuales",
-  "sectores": ["Sector1", "Sector2"]
+  "resumen": "2-3 oraciones del mercado actual",
+  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real"}],
+  "insights": [{"texto":"insight real","fuente":"fuente"}],
+  "riesgo_semana": "riesgo actual",
+  "sectores": ["Sector1","Sector2"]
 }`;
 
   try {
