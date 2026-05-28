@@ -1379,7 +1379,6 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown, sin 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ region, risk, horizon, chips, prompt })
     });
-    });
 
     if (!response.ok) throw new Error(`Error ${response.status}`);
     const data = await response.json();
