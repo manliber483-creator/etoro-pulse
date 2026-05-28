@@ -5,13 +5,11 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { prompt, image, imageType } = req.body;
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
 
-  const FINNHUB = process.env.FINNHUB_API_KEY;
-  const NEWSAPI = process.env.NEWSAPI_KEY;
+  const { image, imageType, prompt, region, risk, horizon, chips } = req.body;
 
-  // ── If image analysis (portfolio tab) ──
+  // ── Portfolio image analysis ──
   if (image) {
     const content = [
       { type: 'image', source: { type: 'base64', media_type: imageType || 'image/png', data: image } },
@@ -20,135 +18,128 @@ export default async function handler(req, res) {
     return callClaude(content, res);
   }
 
-  // ── Weekly report: fetch real data first ──
-  const { region, risk, horizon, chips } = req.body;
-
-  // Tickers to analyze based on region
+  // ── Weekly report: fetch real data ──
   const tickersByRegion = {
     US: ['NVDA', 'AAPL', 'MSFT', 'AMZN', 'META', 'TSLA', 'GOOGL', 'AMD'],
-    EU: ['ASML', 'SAP', 'LVMH', 'SIEGY', 'NESN'],
-    Global: ['NVDA', 'AAPL', 'TSMC', 'AMZN', 'BABA'],
-    LatAm: ['YPF', 'MercadoLibre', 'VALE', 'PBR', 'ITUB'],
+    EU: ['ASML', 'SAP', 'NVO', 'SIEGY', 'IDEXY'],
+    Global: ['NVDA', 'AAPL', 'TSM', 'AMZN', 'BABA'],
+    LatAm: ['YPF', 'MELI', 'VALE', 'PBR', 'ITUB'],
   };
   const tickers = tickersByRegion[region] || tickersByRegion['US'];
 
-  // Fetch data in parallel
   const [marketData, newsData] = await Promise.all([
-    fetchMarketData(tickers, FINNHUB),
-    fetchNews(region, NEWSAPI),
+    fetchYahooFinance(tickers),
+    fetchNews(region, process.env.NEWSAPI_KEY),
   ]);
 
-  // Build data context for Claude (cheap - just redact)
-  const dataContext = `
+  const reportPrompt = `Sos un analista financiero senior. Basándote ÚNICAMENTE en estos datos reales, generá un informe semanal.
+
 DATOS DE MERCADO EN TIEMPO REAL (${new Date().toLocaleDateString('es-AR')}):
 ${marketData}
 
 NOTICIAS FINANCIERAS RECIENTES:
 ${newsData}
 
-CONFIGURACIÓN DEL INVERSOR:
+CONFIGURACIÓN:
 - Mercado: ${region}
 - Perfil de riesgo: ${risk}
 - Horizonte: ${horizon}
-- Enfoques: ${chips?.join(', ')}
-`;
+- Enfoques: ${(chips||[]).join(', ')}
 
-  const reportPrompt = `Sos un analista financiero senior. Basándote ÚNICAMENTE en los datos reales proporcionados abajo, generá un informe semanal.
-
-${dataContext}
-
-Respondé ÚNICAMENTE con un JSON (sin markdown):
+Respondé ÚNICAMENTE con JSON (sin markdown):
 {
-  "sentimiento": "bullish" | "bearish" | "neutral",
+  "sentimiento": "bullish"|"bearish"|"neutral",
   "sp500_semanal": "+1.2%",
   "vix": "18.5",
   "nasdaq_semanal": "+0.8%",
-  "resumen": "2-3 oraciones resumiendo el mercado basadas en los datos reales",
+  "resumen": "2-3 oraciones basadas en los datos reales",
   "ideas": [
     {
-      "ticker": "AAPL",
-      "nombre": "Apple Inc.",
-      "tendencia": "positiva" | "negativa" | "neutral",
-      "accion": "comprar" | "mantener" | "reducir",
-      "tesis": "2-3 oraciones con análisis objetivo basado en los datos reales",
-      "senales": ["Señal concreta 1 de los datos", "Señal concreta 2", "Señal concreta 3"],
-      "fuentes": ["Finnhub", "NewsAPI"],
-      "catalizador": "El catalizador clave de esta semana basado en las noticias reales"
+      "ticker": "NVDA",
+      "nombre": "NVIDIA Corp.",
+      "tendencia": "positiva"|"negativa"|"neutral",
+      "accion": "comprar"|"mantener"|"reducir",
+      "tesis": "2-3 oraciones con datos reales del precio y noticias",
+      "senales": ["Señal 1 con dato real", "Señal 2", "Señal 3"],
+      "fuentes": ["Yahoo Finance", "NewsAPI"],
+      "catalizador": "Catalizador concreto de esta semana"
     }
   ],
-  "insights": [
-    {
-      "texto": "Insight basado en datos reales",
-      "fuente": "Fuente real de la noticia"
-    }
-  ],
-  "riesgo_semana": "El principal riesgo basado en las noticias actuales",
+  "insights": [{"texto": "Insight real", "fuente": "Fuente real"}],
+  "riesgo_semana": "Riesgo basado en noticias actuales",
   "sectores": ["Sector1", "Sector2"]
 }`;
 
   return callClaude(reportPrompt, res);
 }
 
-// ── Fetch stock data from Finnhub ──
-async function fetchMarketData(tickers, apiKey) {
-  if (!apiKey) return 'Finnhub no configurado';
-
+// ── Yahoo Finance (no key needed) ──
+async function fetchYahooFinance(tickers) {
   try {
-    const results = await Promise.all(
-      tickers.slice(0, 6).map(async ticker => {
-        try {
-          const [quoteRes, recRes] = await Promise.all([
-            fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`),
-            fetch(`https://finnhub.io/api/v1/recommendation-trends?symbol=${ticker}&token=${apiKey}`),
-          ]);
-          const quote = await quoteRes.json();
-          const rec = await recRes.json();
-          const latest = rec?.[0];
-          const change = quote.dp ? `${quote.dp > 0 ? '+' : ''}${quote.dp.toFixed(2)}%` : 'N/A';
-          const recSummary = latest
-            ? `Buy:${latest.buy} Hold:${latest.hold} Sell:${latest.sell}`
-            : 'sin datos';
-          return `${ticker}: precio $${quote.c || 'N/A'} | cambio ${change} | analistas: ${recSummary}`;
-        } catch {
-          return `${ticker}: sin datos`;
-        }
-      })
+    const symbols = tickers.slice(0, 8).join(',');
+    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols}&fields=regularMarketPrice,regularMarketChangePercent,regularMarketVolume,fiftyTwoWeekHigh,fiftyTwoWeekLow`;
+    
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    });
+    
+    if (!res.ok) throw new Error('Yahoo Finance error');
+    const data = await res.json();
+    const quotes = data?.quoteResponse?.result || [];
+    
+    if (quotes.length === 0) throw new Error('No quotes');
+
+    // Also get index data
+    const indexRes = await fetch(
+      'https://query1.finance.yahoo.com/v7/finance/quote?symbols=%5EGSPC,%5EIXIC,%5EVIX&fields=regularMarketPrice,regularMarketChangePercent',
+      { headers: { 'User-Agent': 'Mozilla/5.0' } }
     );
-    return results.join('\n');
-  } catch {
-    return 'Error obteniendo datos de mercado';
+    const indexData = await indexRes.json();
+    const indices = indexData?.quoteResponse?.result || [];
+    
+    const sp500 = indices.find(i => i.symbol === '^GSPC');
+    const nasdaq = indices.find(i => i.symbol === '^IXIC');
+    const vix = indices.find(i => i.symbol === '^VIX');
+
+    let result = '';
+    if (sp500) result += `S&P 500: ${sp500.regularMarketPrice?.toFixed(2)} (${sp500.regularMarketChangePercent?.toFixed(2)}% hoy)\n`;
+    if (nasdaq) result += `NASDAQ: ${nasdaq.regularMarketPrice?.toFixed(2)} (${nasdaq.regularMarketChangePercent?.toFixed(2)}% hoy)\n`;
+    if (vix) result += `VIX: ${vix.regularMarketPrice?.toFixed(2)}\n\n`;
+
+    result += quotes.map(q => 
+      `${q.symbol}: $${q.regularMarketPrice?.toFixed(2)} | cambio: ${q.regularMarketChangePercent?.toFixed(2)}% | 52w High: $${q.fiftyTwoWeekHigh?.toFixed(2)} | 52w Low: $${q.fiftyTwoWeekLow?.toFixed(2)}`
+    ).join('\n');
+
+    return result;
+  } catch (e) {
+    return `Error obteniendo precios: ${e.message}`;
   }
 }
 
-// ── Fetch news from NewsAPI ──
+// ── NewsAPI ──
 async function fetchNews(region, apiKey) {
   if (!apiKey) return 'NewsAPI no configurado';
-
   const queries = {
-    US: 'stock market Wall Street earnings',
-    EU: 'European stock market DAX CAC',
+    US: 'stock market Wall Street earnings investment',
+    EU: 'European stock market economy',
     Global: 'global stock market economy',
-    LatAm: 'Latin America stock market economy',
+    LatAm: 'Latin America stock market',
   };
-  const q = queries[region] || queries['US'];
-
   try {
     const res = await fetch(
-      `https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&language=en&sortBy=publishedAt&pageSize=8&apiKey=${apiKey}`
+      `https://newsapi.org/v2/everything?q=${encodeURIComponent(queries[region]||queries.US)}&language=en&sortBy=publishedAt&pageSize=10&apiKey=${apiKey}`
     );
     const data = await res.json();
-    if (data.status !== 'ok') return 'Error en NewsAPI';
-
-    return (data.articles || [])
-      .slice(0, 8)
-      .map(a => `- ${a.title} (${a.source?.name}, ${a.publishedAt?.slice(0, 10)})`)
+    if (data.status !== 'ok') return 'Error NewsAPI: ' + data.message;
+    return (data.articles||[]).slice(0,10)
+      .map(a => `- ${a.title} (${a.source?.name}, ${a.publishedAt?.slice(0,10)})`)
       .join('\n');
-  } catch {
-    return 'Error obteniendo noticias';
+  } catch(e) {
+    return 'Error noticias: ' + e.message;
   }
 }
 
-// ── Call Claude (text or vision) ──
+// ── Call Claude ──
 async function callClaude(content, res) {
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -161,20 +152,18 @@ async function callClaude(content, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 2000,
-        system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Basás tus análisis en los datos concretos que te proveen.',
+        system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Usás los datos reales provistos para tu análisis.',
         messages: [{ role: 'user', content }],
       }),
     });
-
     if (!response.ok) {
       const err = await response.text();
       return res.status(response.status).json({ error: err });
     }
-
     const data = await response.json();
-    const textContent = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    const textContent = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
     return res.status(200).json({ content: textContent });
-  } catch (err) {
+  } catch(err) {
     return res.status(500).json({ error: err.message });
   }
 }
