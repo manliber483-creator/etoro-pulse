@@ -787,6 +787,105 @@
     color: #b0bec9;
   }
 
+  /* ── HOW IT WORKS ── */
+  .how-it-works {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .hiw-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    color: #9ab0c0;
+  }
+
+  .hiw-icon { font-size: 1rem; }
+
+  /* ── DEMO PREVIEW ── */
+  .demo-preview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+
+  .demo-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .demo-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .demo-row:last-child { border-bottom: none; }
+
+  .demo-ticker {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    min-width: 60px;
+  }
+
+  .demo-signal {
+    font-size: 0.8rem;
+    color: #9ab0c0;
+    flex: 1;
+    padding: 0 16px;
+  }
+
+  .demo-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+  }
+
+  .demo-badge.bull { background: rgba(0,229,160,0.12); color: var(--accent); border: 1px solid rgba(0,229,160,0.25); }
+  .demo-badge.bear { background: rgba(255,107,53,0.12); color: var(--warn); border: 1px solid rgba(255,107,53,0.25); }
+  .demo-badge.neut { background: rgba(0,144,255,0.12); color: var(--accent2); border: 1px solid rgba(0,144,255,0.25); }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: rgba(30,42,53,0.4);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 48px;
+  }
+
+  .disclaimer-icon { font-size: 1rem; margin-top: 2px; }
+
+  .disclaimer-text {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .disclaimer-text strong { color: #7a8e9a; }
+
   /* ── DROP ZONE ── */
   .drop-zone {
     border: 2px dashed var(--border);
@@ -868,9 +967,40 @@
   <div class="tab-panel active" id="tab-report">
 
     <div class="section-header">
-      <div class="section-tag">// Inteligencia de Mercado</div>
-      <h1 class="section-title">Informe Semanal<br>de Inversiones</h1>
-      <p class="section-desc">La IA analiza noticias actuales e inversores populares de eToro para darte las mejores ideas de la semana.</p>
+      <div class="section-tag">// Inteligencia de Mercado IA</div>
+      <h1 class="section-title">Detectá oportunidades<br>antes que el mercado</h1>
+      <p class="section-desc">Recibí un informe generado con IA que analiza <strong>noticias financieras recientes</strong>, <strong>sentimiento del mercado</strong> y <strong>tendencias de sectores</strong> para identificar movimientos relevantes — no promesas, información accionable.</p>
+      <div class="how-it-works">
+        <div class="hiw-item"><span class="hiw-icon">📡</span><span>Noticias financieras en tiempo real</span></div>
+        <div class="hiw-item"><span class="hiw-icon">📊</span><span>Sentimiento del mercado vía Stocktwits</span></div>
+        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>IA que sintetiza y explica</span></div>
+        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resultado claro y accionable</span></div>
+      </div>
+    </div>
+
+    <!-- DEMO PREVIEW -->
+    <div class="demo-preview">
+      <div class="demo-label">// Vista previa — ejemplo de informe</div>
+      <div class="demo-row">
+        <div class="demo-ticker">NVDA</div>
+        <div class="demo-signal">Sentimiento alcista fuerte — expansión masiva de infraestructura AI con Corning</div>
+        <div class="demo-badge bull">COMPRAR</div>
+      </div>
+      <div class="demo-row">
+        <div class="demo-ticker">TSLA</div>
+        <div class="demo-signal">Alta volatilidad — resultados mixtos y presión competitiva en China</div>
+        <div class="demo-badge neut">MANTENER</div>
+      </div>
+      <div class="demo-row">
+        <div class="demo-ticker">AAPL</div>
+        <div class="demo-signal">Fuerte acumulación institucional — ciclo de upgrade iPhone con AI integrada</div>
+        <div class="demo-badge bull">COMPRAR</div>
+      </div>
+      <div class="demo-row">
+        <div class="demo-ticker">INTC</div>
+        <div class="demo-signal">Pérdida de cuota de mercado — sin catalizadores claros en el corto plazo</div>
+        <div class="demo-badge bear">REDUCIR</div>
+      </div>
     </div>
 
     <div class="config-card">
@@ -916,7 +1046,7 @@
       </div>
 
       <button class="btn-generate" id="btn-report" onclick="generateReport()">
-        ⚡ Generar Informe Semanal
+        🔥 Ver oportunidades de esta semana
       </button>
     </div>
 
@@ -1004,6 +1134,12 @@
 
   </div>
 
+  <div class="disclaimer">
+    <div class="disclaimer-icon">⚠️</div>
+    <div class="disclaimer-text">
+      <strong>Aviso importante:</strong> Este informe es generado por inteligencia artificial con fines informativos únicamente. No constituye asesoramiento financiero, recomendación de inversión ni consejo legal. Invertir implica riesgos, incluyendo la posible pérdida del capital invertido. Consultá con un asesor financiero certificado antes de tomar decisiones de inversión.
+    </div>
+  </div>
 </main>
 
 <script>
