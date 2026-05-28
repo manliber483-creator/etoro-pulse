@@ -1328,7 +1328,7 @@ Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown, sin 
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, useWebSearch: true })
+      body: JSON.stringify({ region, risk, horizon, chips, useWebSearch: false })
     });
 
     if (!response.ok) throw new Error(`Error ${response.status}`);
