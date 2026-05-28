@@ -45,7 +45,18 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const textContent = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    let textContent = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    
+    // Strip markdown fences server-side
+    textContent = textContent.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    
+    // Extract JSON if there's text before it
+    const start = textContent.indexOf('{');
+    const end = textContent.lastIndexOf('}');
+    if (start > 0 && end > start) {
+      textContent = textContent.slice(start, end + 1);
+    }
+    
     return res.status(200).json({ content: textContent });
   } catch (err) {
     return res.status(500).json({ error: err.message });
