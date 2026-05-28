@@ -513,6 +513,103 @@
     color: var(--accent2);
   }
 
+  /* ── FRASE RESUMEN ── */
+  .frase-resumen {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+  }
+  .frase-resumen em { font-style: normal; color: var(--accent2); }
+
+  /* ── CAMBIOS SEMANA ── */
+  .cambios-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .cambios-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .cambio-item {
+    font-size: 0.82rem;
+    color: #9ab0c0;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(30,42,53,0.5);
+    line-height: 1.5;
+  }
+  .cambio-item:last-child { border-bottom: none; }
+
+  /* ── SCORE TABLE ── */
+  .score-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 32px;
+  }
+  .score-table-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: 24px 60px 1fr 120px 40px;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(30,42,53,0.4);
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-rank { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+  .score-ticker { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--accent); }
+  .score-name { font-size: 0.75rem; color: var(--muted); }
+  .score-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+  .score-num { font-family: 'DM Mono', monospace; font-size: 0.8rem; font-weight: 700; text-align: right; }
+
+  /* ── IDEA SCORE ── */
+  .idea-score {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  /* ── RADAR ── */
+  .radar-block {
+    margin: 10px 0;
+    padding: 10px 14px;
+    background: rgba(0,144,255,0.04);
+    border-left: 2px solid var(--accent2);
+    border-radius: 6px;
+  }
+  .radar-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 32px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  .radar-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .radar-track { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .radar-fill { height: 100%; border-radius: 2px; transition: width 0.8s ease; }
+  .radar-val { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); text-align: right; }
+
   /* ── RICH INSIGHTS ── */
   .insight-title {
     font-family: 'Syne', sans-serif;
@@ -1375,12 +1472,14 @@ Respondé SOLO con JSON (sin markdown):
   "sp500_semanal": "+1.2%",
   "vix": "18.5",
   "nasdaq_semanal": "+0.8%",
+  "frase_resumen": "Una frase corta e impactante que resume el mercado esta semana (máximo 15 palabras)",
+  "cambios_semana": ["Evento 1 que cambió el mercado", "Evento 2", "Evento 3"],
   "resumen": "2-3 oraciones del mercado actual mencionando el perfil ${risk} del inversor",
-  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real","por_que_importa":"explicación simple en 1 oración de por qué esto importa para un inversor común","url_fuente":"https://url-real-si-existe.com"}],
+  "ideas": [{"ticker":"NVDA","nombre":"NVIDIA","score":85,"tendencia":"positiva","accion":"comprar","tesis":"análisis real","senales":["señal1","señal2","señal3"],"fuentes":["Reuters"],"catalizador":"catalizador real","por_que_importa":"explicación simple en 1 oración","url_fuente":"https://url-real-si-existe.com","radar":{"momentum":75,"sentimiento":80,"riesgo":40,"hype":70,"institucional":85}}],
   "insights": [{"titulo":"Título corto impactante","bullet1":"dato clave 1","bullet2":"dato clave 2","bullet3":"impacto para inversor","fuente":"Fuente real","url":"https://url-si-existe.com","por_que_importa":"explicación simple del término o concepto en 1 oración"}],
   "riesgo_semana": "riesgo actual",
   "sectores": ["Sector1","Sector2"],
-  "para_tu_perfil": "1-2 oraciones específicas para perfil ${risk} con horizonte ${horizon} basadas en el contexto actual"
+  "para_tu_perfil": "1-2 oraciones específicas para perfil ${risk} con horizonte ${horizon}"
 }`;
 
   try {
@@ -1450,6 +1549,17 @@ function renderReport(d) {
   const tendenciaLabel = t => t === 'positiva' ? '↑ Tendencia positiva' : t === 'negativa' ? '↓ Tendencia negativa' : '→ Tendencia neutral';
   const accionLabel = a => ({ comprar: 'Interés alto', mantener: 'Interés moderado', reducir: 'Señal de cautela', vender: 'Señal de salida' })[a] || a;
 
+  // Score color
+  const scoreColor = s => s >= 80 ? 'var(--accent)' : s >= 60 ? '#f0c040' : 'var(--warn)';
+
+  // Radar bars
+  const radarBar = (label, val) => `
+    <div class="radar-row">
+      <div class="radar-label">${label}</div>
+      <div class="radar-track"><div class="radar-fill" style="width:${val||0}%;background:${scoreColor(val||0)};"></div></div>
+      <div class="radar-val">${val||0}</div>
+    </div>`;
+
   const ideasHTML = (d.ideas || []).map(idea => `
     <div class="idea-card fade-up-d1" id="card-${idea.ticker}">
       <div class="idea-header">
@@ -1457,12 +1567,23 @@ function renderReport(d) {
           <div class="idea-ticker">${idea.ticker}</div>
           <div class="idea-name">${idea.nombre}</div>
         </div>
-        <div class="idea-action ${idea.accion?.toLowerCase()}">${accionLabel(idea.accion)}</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+          <div class="idea-action ${idea.accion?.toLowerCase()}">${accionLabel(idea.accion)}</div>
+          ${idea.score ? `<div class="idea-score" style="color:${scoreColor(idea.score)};">${idea.score}<span style="font-size:0.6rem;color:var(--muted);">/100</span></div>` : ''}
+        </div>
       </div>
       <div style="font-family:'DM Mono',monospace;font-size:0.65rem;color:${idea.tendencia==='positiva'?'var(--accent)':idea.tendencia==='negativa'?'var(--warn)':'var(--accent2)'};margin-bottom:10px;">${tendenciaLabel(idea.tendencia)}</div>
       <div class="idea-thesis">${idea.tesis}</div>
       ${idea.senales?.length ? `<div class="idea-signals"><div class="signals-label">Señales detectadas</div>${idea.senales.map(s=>`<div class="signal-item">→ ${s}</div>`).join('')}</div>` : ''}
       ${idea.por_que_importa ? `<div class="insight-why" style="margin:8px 0;"><span class="why-label">¿Por qué importa?</span> ${idea.por_que_importa}</div>` : ''}
+      ${idea.radar ? `<div class="radar-block">
+        <div class="signals-label" style="margin-bottom:8px;">Radar IA</div>
+        ${radarBar('Momentum', idea.radar.momentum)}
+        ${radarBar('Sentimiento', idea.radar.sentimiento)}
+        ${radarBar('Institucional', idea.radar.institucional)}
+        ${radarBar('Hype', idea.radar.hype)}
+        ${radarBar('Riesgo', idea.radar.riesgo)}
+      </div>` : ''}
       <div class="idea-footer">
         <div class="idea-catalyst">⚡ ${idea.catalizador}</div>
         <div style="display:flex;align-items:center;gap:8px;">
@@ -1475,12 +1596,39 @@ function renderReport(d) {
     </div>
   `).join('');
 
+  // Score ranking table
+  const sortedIdeas = [...(d.ideas||[])].sort((a,b) => (b.score||0)-(a.score||0));
+  const scoreTableHTML = sortedIdeas.length ? `
+    <div class="score-table fade-up">
+      <div class="score-table-title">🏆 Ranking IA</div>
+      ${sortedIdeas.map((idea, i) => `
+        <div class="score-row">
+          <div class="score-rank">#${i+1}</div>
+          <div class="score-ticker">${idea.ticker}</div>
+          <div class="score-name">${idea.nombre}</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:${idea.score||0}%;background:${scoreColor(idea.score||0)};"></div></div>
+          <div class="score-num" style="color:${scoreColor(idea.score||0)};">${idea.score||'—'}</div>
+        </div>
+      `).join('')}
+    </div>` : '';
+
+  // "3 things that changed"
+  const cambiosHTML = d.cambios_semana?.length ? `
+    <div class="cambios-block fade-up">
+      <div class="cambios-title">🆕 Nuevo esta semana</div>
+      ${d.cambios_semana.map(c => `<div class="cambio-item">→ ${c}</div>`).join('')}
+    </div>` : '';
+
   const output = document.getElementById('report-output');
   output.innerHTML = `
     <div class="report-meta fade-up">
       <div class="report-date">📅 Semana del ${new Date().toLocaleDateString('es-AR', {day:'numeric',month:'long',year:'numeric'})}</div>
       <div class="sentiment-badge ${sentimentClass}">${sentimentLabel}</div>
     </div>
+
+    ${d.frase_resumen ? `<div class="frase-resumen fade-up">🧠 <em>${d.frase_resumen}</em></div>` : ''}
+
+    ${cambiosHTML}
 
     <div class="metrics-row fade-up">
       <div class="metric-card">
@@ -1507,6 +1655,8 @@ function renderReport(d) {
       <div class="perfil-icon">👤</div>
       <div><div class="perfil-label">Para tu perfil</div><div class="perfil-text">${d.para_tu_perfil}</div></div>
     </div>` : ''}
+
+    ${scoreTableHTML}
 
     <div class="ideas-label fade-up">💡 Ideas de la semana</div>
     <div class="ideas-grid">${ideasHTML}</div>
