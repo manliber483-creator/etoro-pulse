@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-sonnet-4-5',
         max_tokens: 2000,
         system: 'Sos un analista financiero senior. Respondés en español con JSON estructurado cuando se te pide. Usás datos reales del mercado actual para tu análisis.',
         messages: [{ role: 'user', content }],
