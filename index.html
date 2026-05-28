@@ -1266,6 +1266,49 @@ function extractJSON(text) {
   return null;
 }
 
+// ── FETCH MARKET DATA FROM FRONTEND (bypasses server blocks) ──
+async function fetchMarketDataFrontend(region) {
+  const tickersByRegion = {
+    US: ['NVDA', 'AAPL', 'MSFT', 'AMZN', 'META', 'TSLA'],
+    EU: ['ASML', 'SAP', 'NVO', 'SIEGY'],
+    Global: ['NVDA', 'AAPL', 'TSM', 'AMZN'],
+    LatAm: ['YPF', 'MELI', 'VALE', 'PBR'],
+  };
+  const tickers = tickersByRegion[region] || tickersByRegion['US'];
+  const allSymbols = [...tickers, '%5EGSPC', '%5EIXIC', '%5EVIX'].join(',');
+
+  try {
+    const res = await fetch(
+      `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${allSymbols}&fields=regularMarketPrice,regularMarketChangePercent,fiftyTwoWeekHigh,fiftyTwoWeekLow`,
+      { headers: { 'User-Agent': 'Mozilla/5.0' } }
+    );
+    const data = await res.json();
+    const quotes = data?.quoteResponse?.result || [];
+
+    const sp500 = quotes.find(q => q.symbol === '^GSPC');
+    const nasdaq = quotes.find(q => q.symbol === '^IXIC');
+    const vix = quotes.find(q => q.symbol === '^VIX');
+    const stocks = quotes.filter(q => !q.symbol.startsWith('^'));
+
+    let text = '';
+    if (sp500) text += `S&P 500: $${sp500.regularMarketPrice?.toFixed(2)} (${sp500.regularMarketChangePercent?.toFixed(2)}% hoy)\n`;
+    if (nasdaq) text += `NASDAQ: $${nasdaq.regularMarketPrice?.toFixed(2)} (${nasdaq.regularMarketChangePercent?.toFixed(2)}% hoy)\n`;
+    if (vix) text += `VIX: ${vix.regularMarketPrice?.toFixed(2)}\n`;
+
+    const sp500Change = sp500?.regularMarketChangePercent;
+    const vixLevel = vix?.regularMarketPrice;
+
+    text += '\nACCIONES:\n';
+    text += stocks.map(q =>
+      `${q.symbol}: $${q.regularMarketPrice?.toFixed(2)} | ${q.regularMarketChangePercent?.toFixed(2)}% hoy | 52w: $${q.fiftyTwoWeekLow?.toFixed(0)}-$${q.fiftyTwoWeekHigh?.toFixed(0)}`
+    ).join('\n');
+
+    return { text, sp500Change, vixLevel };
+  } catch(e) {
+    return { text: 'No se pudieron obtener precios en tiempo real.', sp500Change: null, vixLevel: null };
+  }
+}
+
 // ── WEEKLY REPORT ──
 async function generateReport() {
   const backendUrl = getBackendUrl();
@@ -1287,48 +1330,55 @@ async function generateReport() {
 
   const stepInterval = animateLoadingSteps('step-', 4);
 
-  const prompt = `Eres un analista financiero senior especializado en eToro. Generá un informe semanal de inversiones en acciones con el siguiente contexto:
-- Mercado: ${region}
-- Perfil de riesgo del inversor: ${risk}
-- Horizonte de inversión: ${horizon}
-- Enfoques prioritarios: ${chips.join(', ')}
+  // Fetch market data from frontend
+  const marketData = await fetchMarketDataFrontend(region);
 
-El informe debe ser actual (hoy es ${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}) y basarse en noticias reales de esta semana.
+  const prompt = `Sos un analista financiero senior. Basándote en estos datos reales de mercado, generá un informe semanal.
+
+DATOS REALES DE MERCADO (${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}):
+${marketData.text}
+
+CONFIGURACIÓN DEL INVERSOR:
+- Mercado: ${region}
+- Perfil de riesgo: ${risk}
+- Horizonte: ${horizon}
+- Enfoques: ${chips.join(', ')}
 
 Respondé ÚNICAMENTE con un JSON con esta estructura exacta (sin markdown, sin explicaciones):
 {
   "sentimiento": "bullish" | "bearish" | "neutral",
-  "sp500_semanal": "+1.2%" (string con variación estimada),
-  "vix": "18.5" (nivel aproximado),
+  "sp500_semanal": "+1.2%" (string con variación del día del S&P 500 de los datos reales),
+  "vix": "18.5" (nivel real del VIX de los datos),
   "nasdaq_semanal": "+0.8%",
-  "resumen": "2-3 oraciones resumiendo el mercado esta semana",
+  "resumen": "2-3 oraciones resumiendo el mercado basadas en los datos reales provistos",
   "ideas": [
     {
       "ticker": "AAPL",
       "nombre": "Apple Inc.",
       "tendencia": "positiva" | "negativa" | "neutral",
       "accion": "comprar" | "mantener" | "reducir",
-      "tesis": "2-3 oraciones con análisis objetivo de la situación actual",
-      "senales": ["Señal concreta 1", "Señal concreta 2", "Señal concreta 3"],
-      "fuentes": ["Reuters", "Bloomberg"],
-      "catalizador": "El catalizador o evento clave de esta semana"
+      "tesis": "2-3 oraciones con análisis objetivo basado en el precio real y contexto",
+      "senales": ["Precio actual y variación real", "Posición en rango 52 semanas", "Señal adicional"],
+      "fuentes": ["Yahoo Finance"],
+      "catalizador": "Catalizador concreto basado en los datos"
     }
-  ] (4 ideas),
+  ] (4 ideas usando los tickers de los datos reales),
   "insights": [
     {
-      "texto": "El insight accionable",
-      "fuente": "Goldman Sachs / Bloomberg / etc."
+      "texto": "Insight basado en los datos reales",
+      "fuente": "Yahoo Finance / datos de mercado"
     }
   ] (4 insights),
-  "riesgo_semana": "El principal riesgo a monitorear",
-  "sectores": ["Tecnología", "Energía"] (3-5 sectores a seguir)
+  "riesgo_semana": "Riesgo basado en los datos actuales (VIX, variaciones, etc.)",
+  "sectores": ["Sector1", "Sector2"] (3-5 sectores)
 }`;
 
   try {
     const response = await fetch(backendUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ region, risk, horizon, chips, useWebSearch: false })
+      body: JSON.stringify({ region, risk, horizon, chips, prompt })
+    });
     });
 
     if (!response.ok) throw new Error(`Error ${response.status}`);
