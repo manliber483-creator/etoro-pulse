@@ -384,15 +384,12 @@
         </div>
       </div>
       <div class="drop-zone" id="drop-zone" onclick="document.getElementById('img-input').click()">
-        <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
+        <input type="file" id="img-input" accept="image/*" multiple style="display:none" onchange="handleImageSelect(event)">
         <div class="drop-zone-icon" style="font-size:1.4rem;color:var(--coral);">↑</div>
         <div class="drop-zone-title">Arrastrá o hacé click para subir</div>
-        <div class="drop-zone-sub">Captura de pantalla de tu cartera (cualquier plataforma)</div>
+        <div class="drop-zone-sub">Captura de tu cartera — podés subir hasta 3 si no entra en una sola</div>
       </div>
-      <div class="img-preview-wrapper" id="img-preview-wrapper" style="display:none">
-        <img id="img-preview" src="" alt="Preview">
-        <button class="btn-remove-img" onclick="removeImage()">Cambiar imagen</button>
-      </div>
+      <div class="img-preview-wrapper" id="img-preview-wrapper" style="display:none"></div>
       <button class="btn-generate" id="btn-portfolio" onclick="analyzePortfolio()" style="margin-top:22px;">Analizar mi cartera</button>
     </div>
     <div class="loading-state" id="portfolio-loading">
@@ -580,37 +577,59 @@ async function loadStocktwits(ticker) {
     el.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;width:100%;"><div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">STOCKTWITS</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${color};">${bullPct}% bullish</span></div><div style="height:4px;background:var(--line);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${bullPct}%;background:${color};border-radius:2px;transition:width 0.8s ease;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">${bullish} · ${bearish} · ${messages.length} msgs</div></div>`;
   } catch { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">Stocktwits no disponible</span>`; }
 }
-let selectedImageBase64 = null;
-let selectedImageType = null;
-function handleImageSelect(event) { const file = event.target.files[0]; if (file) loadImage(file); }
-function loadImage(file) {
+let selectedImages = []; // array de {data, type, src}
+const MAX_IMAGES = 3;
+function handleImageSelect(event) {
+  const files = Array.from(event.target.files || []);
+  files.forEach(f => { if (f.type.startsWith('image/')) addImage(f); });
+  event.target.value = '';
+}
+function addImage(file) {
+  if (selectedImages.length >= MAX_IMAGES) {
+    alert('Podés subir hasta 3 capturas. Si tu cartera es más larga, usá el campo de comentario para aclarar lo que falte.');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = (e) => {
     const result = e.target.result;
-    selectedImageBase64 = result.split(',')[1];
-    selectedImageType = file.type;
-    document.getElementById('img-preview').src = result;
-    document.getElementById('img-preview-wrapper').style.display = 'block';
-    document.getElementById('drop-zone').style.display = 'none';
+    selectedImages.push({ data: result.split(',')[1], type: file.type, src: result });
+    renderImagePreviews();
   };
   reader.readAsDataURL(file);
 }
-function removeImage() {
-  selectedImageBase64 = null; selectedImageType = null;
-  document.getElementById('img-preview-wrapper').style.display = 'none';
-  document.getElementById('drop-zone').style.display = 'block';
-  document.getElementById('img-input').value = '';
+function renderImagePreviews() {
+  const wrapper = document.getElementById('img-preview-wrapper');
+  const dropZone = document.getElementById('drop-zone');
+  if (selectedImages.length === 0) {
+    wrapper.style.display = 'none';
+    wrapper.innerHTML = '';
+    dropZone.style.display = 'block';
+    return;
+  }
+  wrapper.style.display = 'block';
+  wrapper.innerHTML = selectedImages.map((img, i) => `
+    <div style="position:relative;margin-bottom:12px;">
+      <img src="${img.src}" alt="Captura ${i+1}" style="width:100%;max-height:340px;object-fit:contain;border-radius:14px;border:1px solid var(--line);">
+      <button class="btn-remove-img" onclick="removeImage(${i})">Quitar</button>
+      <div style="position:absolute;top:12px;left:12px;background:var(--navy);color:#fff;font-family:'JetBrains Mono',monospace;font-size:0.62rem;padding:4px 10px;border-radius:8px;">Captura ${i+1}</div>
+    </div>`).join('') +
+    (selectedImages.length < MAX_IMAGES ? `<button class="btn-generate" onclick="document.getElementById('img-input').click()" style="background:var(--surface2);color:var(--navy);box-shadow:none;border:1px dashed var(--line);margin-bottom:0;">+ Agregar otra captura (${selectedImages.length}/${MAX_IMAGES})</button>` : `<div style="font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--ink-faint);text-align:center;padding:8px;">Máximo de 3 capturas alcanzado</div>`);
+  dropZone.style.display = 'none';
+}
+function removeImage(index) {
+  selectedImages.splice(index, 1);
+  renderImagePreviews();
 }
 const dropZone = document.getElementById('drop-zone');
 if (dropZone) {
   dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-  dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); const file = e.dataTransfer.files[0]; if (file && file.type.startsWith('image/')) loadImage(file); });
+  dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); Array.from(e.dataTransfer.files || []).forEach(f => { if (f.type.startsWith('image/')) addImage(f); }); });
 }
 async function analyzePortfolio() {
   const backendUrl = getBackendUrl();
   if (!backendUrl) return;
-  if (!selectedImageBase64) { alert(' Primero subí una captura de pantalla de tu cartera.'); return; }
+  if (selectedImages.length === 0) { alert('Primero subí al menos una captura de tu cartera.'); return; }
   const risk = document.getElementById('portfolio-risk').value;
   const horizon = document.getElementById('portfolio-horizon').value;
   const comment = document.getElementById('portfolio-comment').value;
@@ -619,7 +638,7 @@ async function analyzePortfolio() {
   const output = document.getElementById('portfolio-output');
   btn.disabled = true; loading.classList.add('visible'); output.classList.remove('visible'); output.innerHTML = '';
   const stepInterval = animateLoadingSteps('pstep-', 4);
-  const prompt = `Sos un analista financiero senior. El inversor te mandó una captura de pantalla de su cartera actual.
+  const prompt = `Sos un analista financiero senior. El inversor te mandó una o varias capturas de pantalla de su cartera actual (si hay varias imágenes, son partes de la MISMA cartera que no entraban en una sola captura — analizalas como un único portafolio combinado, no como carteras separadas).
 
 CONTEXTO DEL INVERSOR:
 - Perfil de riesgo: ${risk}
@@ -655,7 +674,7 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
 
 NOTA sobre conceptos_clave: incluí 2 o 3 conceptos que de verdad aparezcan en el análisis de ESTA cartera (los más relevantes para que el inversor entienda su situación). No conceptos genéricos al azar — los que le sirven para entender SU cartera.`;
   try {
-    const response = await fetch(backendUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, image: selectedImageBase64, imageType: selectedImageType, useWebSearch: true }) });
+    const response = await fetch(backendUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, images: selectedImages.map(img => ({ data: img.data, type: img.type })), useWebSearch: true }) });
     if (!response.ok) throw new Error(`Error ${response.status}`);
     const data = await response.json();
     const text = data.content || data.text || data.result || '';
