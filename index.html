@@ -273,10 +273,10 @@
       <h1 class="section-title">Entendé qué pasa<br>en el mercado, <span class="accent">en serio</span></h1>
       <p class="section-desc">La IA lee noticias y datos reales y te los resume en lenguaje claro — <strong>sin jerga, sin vueltas</strong>. No es asesoramiento financiero, es entender en minutos lo que te tomaría horas.</p>
       <div class="how-it-works">
-        <div class="hiw-item"><span class="hiw-icon">📡</span><span>Noticias en tiempo real</span></div>
-        <div class="hiw-item"><span class="hiw-icon">📊</span><span>Sentimiento del mercado</span></div>
-        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>IA que sintetiza</span></div>
-        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resumen accionable</span></div>
+        <div class="hiw-item"><span>Noticias en tiempo real</span></div>
+        <div class="hiw-item"><span>Sentimiento del mercado</span></div>
+        <div class="hiw-item"><span>IA que sintetiza</span></div>
+        <div class="hiw-item"><span>Resumen accionable</span></div>
       </div>
       <div class="sources-strip">
         <span class="sources-label">Fuentes:</span>
@@ -353,10 +353,10 @@
       <h1 class="section-title">¿Tu cartera está bien armada<br>o estás <span class="accent">arriesgando de más</span>?</h1>
       <p class="section-desc">Subí una captura de tu cartera — de eToro, IOL, Balanz, Binance o donde inviertas — y obtené al instante un análisis con score, diversificación, riesgos y qué revisar. <strong>En español simple, sin jerga.</strong></p>
       <div class="how-it-works">
-        <div class="hiw-item"><span class="hiw-icon">📸</span><span>Subís una foto</span></div>
-        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>La IA la analiza</span></div>
-        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resultado en segundos</span></div>
-        <div class="hiw-item"><span class="hiw-icon">🇦🇷</span><span>En español simple</span></div>
+        <div class="hiw-item"><span>Subís una foto</span></div>
+        <div class="hiw-item"><span>La IA la analiza</span></div>
+        <div class="hiw-item"><span>Resultado en segundos</span></div>
+        <div class="hiw-item"><span>En español simple</span></div>
       </div>
     </div>
     <div class="portfolio-form">
@@ -384,13 +384,13 @@
       </div>
       <div class="drop-zone" id="drop-zone" onclick="document.getElementById('img-input').click()">
         <input type="file" id="img-input" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
-        <div class="drop-zone-icon">📸</div>
+        <div class="drop-zone-icon" style="font-size:1.4rem;color:var(--coral);">↑</div>
         <div class="drop-zone-title">Arrastrá o hacé click para subir</div>
         <div class="drop-zone-sub">Captura de pantalla de tu cartera (cualquier plataforma)</div>
       </div>
       <div class="img-preview-wrapper" id="img-preview-wrapper" style="display:none">
         <img id="img-preview" src="" alt="Preview">
-        <button class="btn-remove-img" onclick="removeImage()">✕ Cambiar imagen</button>
+        <button class="btn-remove-img" onclick="removeImage()">Cambiar imagen</button>
       </div>
       <button class="btn-generate" id="btn-portfolio" onclick="analyzePortfolio()" style="margin-top:22px;">Analizar mi cartera</button>
     </div>
@@ -406,7 +406,7 @@
     <div class="portfolio-output" id="portfolio-output"></div>
   </div>
   <div class="disclaimer">
-    <div class="disclaimer-icon">ⓘ</div>
+    <div class="disclaimer-icon"></div>
     <div class="disclaimer-text">
       <strong>Aviso importante:</strong> Este informe es generado por inteligencia artificial con fines informativos únicamente. No constituye asesoramiento financiero, recomendación de inversión ni consejo legal. Invertir implica riesgos, incluyendo la posible pérdida del capital invertido. Consultá con un asesor financiero certificado antes de tomar decisiones de inversión.
     </div>
@@ -502,7 +502,7 @@ Respondé SOLO con JSON (sin markdown):
     renderReport(parsed);
   } catch (err) {
     clearInterval(stepInterval); loading.classList.remove('visible'); btn.disabled = false;
-    output.innerHTML = `<div class="risk-banner"><div class="risk-icon">⚠️</div><div><div class="risk-title">Error</div><div class="risk-text">${err.message}. Verificá la conexión e intentá de nuevo.</div></div></div>`;
+    output.innerHTML = `<div class="risk-banner"><div class="risk-icon"></div><div><div class="risk-title">Error</div><div class="risk-text">${err.message}. Verificá la conexión e intentá de nuevo.</div></div></div>`;
     output.classList.add('visible');
   }
 }
@@ -514,9 +514,9 @@ function renderReport(d) {
   const insightsHTML = (d.insights || []).map((ins, i) => `
     <div class="insight-item fade-up-d2"><div class="insight-num">0${i+1}</div><div style="flex:1;">
       <div class="insight-title">${ins.titulo || ins.texto || ''}</div>
-      ${ins.bullet1 ? `<div class="insight-bullets"><div class="insight-bullet">→ ${ins.bullet1}</div>${ins.bullet2 ? `<div class="insight-bullet">→ ${ins.bullet2}</div>` : ''}${ins.bullet3 ? `<div class="insight-bullet insight-bullet-impact">⚡ ${ins.bullet3}</div>` : ''}</div>` : ''}
+      ${ins.bullet1 ? `<div class="insight-bullets"><div class="insight-bullet">→ ${ins.bullet1}</div>${ins.bullet2 ? `<div class="insight-bullet">→ ${ins.bullet2}</div>` : ''}${ins.bullet3 ? `<div class="insight-bullet insight-bullet-impact">${ins.bullet3}</div>` : ''}</div>` : ''}
       ${ins.por_que_importa ? `<div class="insight-why"><span class="why-label">¿Por qué importa?</span> ${ins.por_que_importa}</div>` : ''}
-      <div class="insight-source-row">${ins.url ? `<a href="${ins.url}" target="_blank" class="insight-link">🔗 ${ins.fuente}</a>` : `<span class="insight-source">${ins.fuente || ''}</span>`}</div>
+      <div class="insight-source-row">${ins.url ? `<a href="${ins.url}" target="_blank" class="insight-link">${ins.fuente}</a>` : `<span class="insight-source">${ins.fuente || ''}</span>`}</div>
     </div></div>`).join('');
   const sectorsHTML = (d.sectores || []).map(s => `<div class="sector-tag">${s}</div>`).join('');
   const tendenciaLabel = t => t === 'positiva' ? '↑ Tendencia positiva' : t === 'negativa' ? '↓ Tendencia negativa' : '→ Tendencia neutral';
@@ -532,14 +532,14 @@ function renderReport(d) {
       ${idea.senales?.length ? `<div class="idea-signals"><div class="signals-label">Señales detectadas</div>${idea.senales.map(s=>`<div class="signal-item">→ ${s}</div>`).join('')}</div>` : ''}
       ${idea.por_que_importa ? `<div class="insight-why" style="margin:8px 0;"><span class="why-label">¿Por qué importa?</span> ${idea.por_que_importa}</div>` : ''}
       ${idea.radar ? `<div class="radar-block"><div class="signals-label" style="margin-bottom:8px;">Radar IA</div>${radarBar('Momentum', idea.radar.momentum)}${radarBar('Sentimiento', idea.radar.sentimiento)}${radarBar('Institucional', idea.radar.institucional)}${radarBar('Hype', idea.radar.hype)}${radarBar('Riesgo', idea.radar.riesgo)}</div>` : ''}
-      <div class="idea-footer"><div class="idea-catalyst">⚡ ${idea.catalizador}</div><div style="display:flex;align-items:center;gap:8px;">${idea.fuentes?.map(f => idea.url_fuente ? `<a href="${idea.url_fuente}" target="_blank" class="insight-link" style="font-size:0.6rem;">🔗 ${f}</a>` : `<span class="idea-source-tag">${f}</span>`).join('') || ''}<div class="st-sentiment" id="st-${idea.ticker}"><span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">⏳ ST...</span></div></div></div>
+      <div class="idea-footer"><div class="idea-catalyst">${idea.catalizador}</div><div style="display:flex;align-items:center;gap:8px;">${idea.fuentes?.map(f => idea.url_fuente ? `<a href="${idea.url_fuente}" target="_blank" class="insight-link" style="font-size:0.6rem;">${f}</a>` : `<span class="idea-source-tag">${f}</span>`).join('') || ''}<div class="st-sentiment" id="st-${idea.ticker}"><span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">⏳ ST...</span></div></div></div>
     </div>`).join('');
   const sortedIdeas = [...(d.ideas||[])].sort((a,b) => (b.score||0)-(a.score||0));
-  const scoreTableHTML = sortedIdeas.length ? `<div class="score-table fade-up"><div class="score-table-title">🏆 Ranking IA</div>${sortedIdeas.map((idea, i) => `<div class="score-row"><div class="score-rank">#${i+1}</div><div class="score-ticker">${idea.ticker}</div><div class="score-name">${idea.nombre}</div><div class="score-bar-wrap"><div class="score-bar" style="width:${idea.score||0}%;background:${scoreColor(idea.score||0)};"></div></div><div class="score-num" style="color:${scoreColor(idea.score||0)};">${idea.score||'—'}</div></div>`).join('')}</div>` : '';
-  const cambiosHTML = d.cambios_semana?.length ? `<div class="cambios-block fade-up"><div class="cambios-title">🆕 Nuevo esta semana</div>${d.cambios_semana.map(c => `<div class="cambio-item">→ ${c}</div>`).join('')}</div>` : '';
+  const scoreTableHTML = sortedIdeas.length ? `<div class="score-table fade-up"><div class="score-table-title">Ranking IA</div>${sortedIdeas.map((idea, i) => `<div class="score-row"><div class="score-rank">#${i+1}</div><div class="score-ticker">${idea.ticker}</div><div class="score-name">${idea.nombre}</div><div class="score-bar-wrap"><div class="score-bar" style="width:${idea.score||0}%;background:${scoreColor(idea.score||0)};"></div></div><div class="score-num" style="color:${scoreColor(idea.score||0)};">${idea.score||'—'}</div></div>`).join('')}</div>` : '';
+  const cambiosHTML = d.cambios_semana?.length ? `<div class="cambios-block fade-up"><div class="cambios-title">Nuevo esta semana</div>${d.cambios_semana.map(c => `<div class="cambio-item">→ ${c}</div>`).join('')}</div>` : '';
   const output = document.getElementById('report-output');
   output.innerHTML = `
-    <div class="report-meta fade-up"><div class="report-date">📅 Semana del ${new Date().toLocaleDateString('es-AR', {day:'numeric',month:'long',year:'numeric'})}</div><div class="sentiment-badge ${sentimentClass}">${sentimentLabel}</div></div>
+    <div class="report-meta fade-up"><div class="report-date">Semana del ${new Date().toLocaleDateString('es-AR', {day:'numeric',month:'long',year:'numeric'})}</div><div class="sentiment-badge ${sentimentClass}">${sentimentLabel}</div></div>
     ${d.frase_resumen ? `<div class="frase-resumen fade-up"><em>${d.frase_resumen}</em></div>` : ''}
     ${cambiosHTML}
     <div class="metrics-row fade-up">
@@ -549,14 +549,14 @@ function renderReport(d) {
       <div class="metric-card"><div class="metric-label">Sentimiento IA</div><div class="metric-value ${sentimentClass === 'bullish' ? 'up' : sentimentClass === 'bearish' ? 'down' : ''}">${sentimentLabel}</div></div>
     </div>
     <div class="summary-block fade-up">${d.resumen}</div>
-    ${d.para_tu_perfil ? `<div class="perfil-block fade-up"><div class="perfil-icon">👤</div><div><div class="perfil-label">Para tu perfil</div><div class="perfil-text">${d.para_tu_perfil}</div></div></div>` : ''}
+    ${d.para_tu_perfil ? `<div class="perfil-block fade-up"><div class="perfil-icon"></div><div><div class="perfil-label">Para tu perfil</div><div class="perfil-text">${d.para_tu_perfil}</div></div></div>` : ''}
     ${scoreTableHTML}
-    <div class="ideas-label fade-up">💡 Ideas de la semana</div>
+    <div class="ideas-label fade-up">Ideas de la semana</div>
     <div class="ideas-grid">${ideasHTML}</div>
-    <div class="ideas-label fade-up">📌 Insights accionables</div>
+    <div class="ideas-label fade-up">Insights accionables</div>
     <div class="insights-list">${insightsHTML}</div>
-    <div class="risk-banner fade-up-d3"><div class="risk-icon">⚠️</div><div><div class="risk-title">Riesgo principal de la semana</div><div class="risk-text">${d.riesgo_semana}</div></div></div>
-    <div class="ideas-label fade-up">📡 Sectores a monitorear</div>
+    <div class="risk-banner fade-up-d3"><div class="risk-icon"></div><div><div class="risk-title">Riesgo principal de la semana</div><div class="risk-text">${d.riesgo_semana}</div></div></div>
+    <div class="ideas-label fade-up">Sectores a monitorear</div>
     <div class="sectors-row fade-up-d4">${sectorsHTML}</div>`;
   output.classList.add('visible');
   (d.ideas || []).forEach(idea => loadStocktwits(idea.ticker));
@@ -574,10 +574,10 @@ async function loadStocktwits(ticker) {
     messages.forEach(m => { if (m.entities?.sentiment?.basic === 'Bullish') bullish++; if (m.entities?.sentiment?.basic === 'Bearish') bearish++; });
     const total = bullish + bearish;
     const bullPct = total > 0 ? Math.round((bullish / total) * 100) : null;
-    if (bullPct === null) { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">💬 ${messages.length} menciones</span>`; return; }
+    if (bullPct === null) { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">${messages.length} menciones</span>`; return; }
     const color = bullPct >= 60 ? 'var(--up)' : bullPct <= 40 ? 'var(--down)' : 'var(--gold)';
-    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;width:100%;"><div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">STOCKTWITS</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${color};">${bullPct}% bullish</span></div><div style="height:4px;background:var(--line);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${bullPct}%;background:${color};border-radius:2px;transition:width 0.8s ease;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">🐂 ${bullish} · 🐻 ${bearish} · ${messages.length} msgs</div></div>`;
-  } catch { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">📊 Stocktwits no disponible</span>`; }
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;width:100%;"><div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">STOCKTWITS</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${color};">${bullPct}% bullish</span></div><div style="height:4px;background:var(--line);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${bullPct}%;background:${color};border-radius:2px;transition:width 0.8s ease;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">${bullish} · ${bearish} · ${messages.length} msgs</div></div>`;
+  } catch { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">Stocktwits no disponible</span>`; }
 }
 let selectedImageBase64 = null;
 let selectedImageType = null;
@@ -609,7 +609,7 @@ if (dropZone) {
 async function analyzePortfolio() {
   const backendUrl = getBackendUrl();
   if (!backendUrl) return;
-  if (!selectedImageBase64) { alert('⚠️ Primero subí una captura de pantalla de tu cartera.'); return; }
+  if (!selectedImageBase64) { alert(' Primero subí una captura de pantalla de tu cartera.'); return; }
   const risk = document.getElementById('portfolio-risk').value;
   const horizon = document.getElementById('portfolio-horizon').value;
   const comment = document.getElementById('portfolio-comment').value;
@@ -658,7 +658,7 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
     renderPortfolio(parsed);
   } catch (err) {
     clearInterval(stepInterval); loading.classList.remove('visible'); btn.disabled = false;
-    output.innerHTML = `<div class="risk-banner"><div class="risk-icon">⚠️</div><div><div class="risk-title">Error</div><div class="risk-text">${err.message}</div></div></div>`;
+    output.innerHTML = `<div class="risk-banner"><div class="risk-icon"></div><div><div class="risk-title">Error</div><div class="risk-text">${err.message}</div></div></div>`;
     output.classList.add('visible');
   }
 }
@@ -666,7 +666,7 @@ function renderPortfolio(d) {
   const scoreClass = d.score_general >= 7 ? 'score-high' : d.score_general >= 5 ? 'score-mid' : 'score-low';
   const positionsHTML = (d.posiciones || []).map(p => `<div class="position-analysis-card fade-up-d1"><div class="pa-ticker-block"><div class="pa-ticker">${p.ticker}</div><div style="font-family:'Inter',sans-serif;font-size:0.76rem;color:var(--ink-faint);margin-top:2px;">${p.nombre || ''}</div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);margin-top:6px;">${p.razon}</div></div><div class="pa-analysis">${p.analisis}</div><div class="pa-verdict ${p.verdict}">${p.verdict.toUpperCase()}</div></div>`).join('');
   const recosHTML = (d.recomendaciones || []).map((r, i) => `<div class="insight-item"><div class="insight-num">0${i+1}</div><div class="insight-text">${r}</div></div>`).join('');
-  const alertHTML = d.alerta ? `<div class="risk-banner fade-up-d3" style="margin-bottom:34px;"><div class="risk-icon">🚨</div><div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div></div>` : '';
+  const alertHTML = d.alerta ? `<div class="risk-banner fade-up-d3" style="margin-bottom:34px;"><div class="risk-icon"></div><div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div></div>` : '';
   const output = document.getElementById('portfolio-output');
   output.innerHTML = `
     <div class="portfolio-summary fade-up">
@@ -676,9 +676,9 @@ function renderPortfolio(d) {
     </div>
     <div class="summary-block fade-up" style="margin-bottom:34px;">${d.resumen_general}</div>
     ${alertHTML}
-    <div class="ideas-label fade-up">📊 Análisis por posición</div>
+    <div class="ideas-label fade-up">Análisis por posición</div>
     <div class="position-analysis-list">${positionsHTML}</div>
-    <div class="ideas-label fade-up">✅ Recomendaciones</div>
+    <div class="ideas-label fade-up">Recomendaciones</div>
     <div class="insights-list" style="margin-bottom:0;">${recosHTML}</div>`;
   output.classList.add('visible');
 }
