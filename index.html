@@ -34,12 +34,8 @@
   header { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 22px 40px; border-bottom: 1px solid var(--line); background: rgba(245,243,238,0.85); backdrop-filter: blur(16px); }
   .logo { display: flex; align-items: center; gap: 11px; }
   .logo-mark { width: 38px; height: 38px; border-radius: 11px; background: var(--navy); display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 4px 14px rgba(28,61,90,0.22); }
-  .logo-mark::after { content: ''; width: 13px; height: 13px; border-radius: 50%; border: 2.5px solid var(--coral); border-top-color: transparent; transform: rotate(-45deg); }
   .logo-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.45rem; letter-spacing: -0.5px; color: var(--ink); }
   .logo-name b { color: var(--coral); font-weight: 600; }
-  .badge-live { display: flex; align-items: center; gap: 7px; font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--navy); background: var(--surface); border: 1px solid var(--line); padding: 6px 13px; border-radius: 30px; letter-spacing: 0.5px; }
-  .pulse { width: 6px; height: 6px; background: var(--up); border-radius: 50%; box-shadow: 0 0 0 0 rgba(26,138,92,0.5); animation: pulse 1.8s infinite; }
-  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(26,138,92,0.5);} 70% { box-shadow: 0 0 0 6px rgba(26,138,92,0);} 100% { box-shadow: 0 0 0 0 rgba(26,138,92,0);} }
 
   /* ── TABS ── */
   .tabs-wrapper { position: relative; z-index: 10; display: flex; gap: 4px; padding: 0 40px; border-bottom: 1px solid var(--line); background: rgba(245,243,238,0.7); }
@@ -257,10 +253,15 @@
 <body>
 <header>
   <div class="logo">
-    <div class="logo-mark"></div>
+    <div class="logo-mark">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 16.5L9 11L13 14.5L20 6.5" stroke="#f0654a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="20" cy="6.5" r="2.4" fill="#f0654a"/>
+        <path d="M4 20.5H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+      </svg>
+    </div>
     <div class="logo-name">Port<b>IQ</b></div>
   </div>
-  <div class="badge-live"><div class="pulse"></div> Análisis con IA</div>
 </header>
 <div class="tabs-wrapper">
   <button class="tab-btn active" onclick="switchTab('portfolio')">Mi Cartera</button>
@@ -628,6 +629,8 @@ ${comment ? `- Comentario del inversor: "${comment}"` : ''}
 
 Analizá las 8 posiciones más relevantes (las de mayor monto o mayor riesgo) que ves en la imagen, no todas. Para cada una evaluá si conviene mantener, reforzar, reducir o salir, basándote en el contexto actual del mercado.
 
+IMPORTANTE — EDUCÁ AL INVERSOR: El inversor puede ser principiante. Cada vez que uses un término técnico (diversificación, volatilidad, concentración, correlación, etc.), explicalo en lenguaje SIMPLE y SIEMPRE en contexto de SU cartera real (no definiciones genéricas). Ejemplo: en vez de "está poco diversificado", decí "tenés el 65% en tecnología — eso se llama estar 'poco diversificado', y significa que si el sector tech cae, tu cartera cae con él". Hablale como a alguien que está aprendiendo, sin tratarlo de tonto.
+
 Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
 {
   "score_general": 7.5,
@@ -644,8 +647,13 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
     }
   ],
   "recomendaciones": ["Recomendación accionable 1", "Recomendación accionable 2", "Recomendación accionable 3"],
+  "conceptos_clave": [
+    {"termino": "Diversificación", "explicacion": "Explicación SIMPLE del concepto aplicada a SU cartera real, máximo 2 oraciones, como si le enseñaras a un principiante usando sus propios datos"}
+  ],
   "alerta": "Alerta urgente si la hay, o null"
-}`;
+}
+
+NOTA sobre conceptos_clave: incluí 2 o 3 conceptos que de verdad aparezcan en el análisis de ESTA cartera (los más relevantes para que el inversor entienda su situación). No conceptos genéricos al azar — los que le sirven para entender SU cartera.`;
   try {
     const response = await fetch(backendUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, image: selectedImageBase64, imageType: selectedImageType, useWebSearch: true }) });
     if (!response.ok) throw new Error(`Error ${response.status}`);
@@ -666,6 +674,8 @@ function renderPortfolio(d) {
   const scoreClass = d.score_general >= 7 ? 'score-high' : d.score_general >= 5 ? 'score-mid' : 'score-low';
   const positionsHTML = (d.posiciones || []).map(p => `<div class="position-analysis-card fade-up-d1"><div class="pa-ticker-block"><div class="pa-ticker">${p.ticker}</div><div style="font-family:'Inter',sans-serif;font-size:0.76rem;color:var(--ink-faint);margin-top:2px;">${p.nombre || ''}</div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);margin-top:6px;">${p.razon}</div></div><div class="pa-analysis">${p.analisis}</div><div class="pa-verdict ${p.verdict}">${p.verdict.toUpperCase()}</div></div>`).join('');
   const recosHTML = (d.recomendaciones || []).map((r, i) => `<div class="insight-item"><div class="insight-num">0${i+1}</div><div class="insight-text">${r}</div></div>`).join('');
+  const conceptosHTML = (d.conceptos_clave || []).map(c => `<div class="insight-item" style="background:var(--coral-soft);border-color:var(--coral-soft);"><div style="flex:1;"><div class="insight-title" style="color:var(--navy);">${c.termino}</div><div class="insight-text" style="margin-top:4px;">${c.explicacion}</div></div></div>`).join('');
+  const conceptosSection = (d.conceptos_clave && d.conceptos_clave.length) ? `<div class="ideas-label fade-up" style="margin-top:34px;">Para entender tu cartera</div><div style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:16px;margin-top:-8px;">Términos clave explicados con tus propios datos</div><div class="insights-list" style="margin-bottom:0;">${conceptosHTML}</div>` : '';
   const alertHTML = d.alerta ? `<div class="risk-banner fade-up-d3" style="margin-bottom:34px;"><div class="risk-icon"></div><div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div></div>` : '';
   const output = document.getElementById('portfolio-output');
   output.innerHTML = `
@@ -679,7 +689,8 @@ function renderPortfolio(d) {
     <div class="ideas-label fade-up">Análisis por posición</div>
     <div class="position-analysis-list">${positionsHTML}</div>
     <div class="ideas-label fade-up">Recomendaciones</div>
-    <div class="insights-list" style="margin-bottom:0;">${recosHTML}</div>`;
+    <div class="insights-list" style="margin-bottom:0;">${recosHTML}</div>
+    ${conceptosSection}`;
   output.classList.add('visible');
 }
 </script>
