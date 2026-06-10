@@ -648,6 +648,12 @@ ${comment ? `- Comentario del inversor: "${comment}"` : ''}
 
 Analizá las 8 posiciones más relevantes (las de mayor monto o mayor riesgo) que ves en la imagen, no todas. Para cada una evaluá si conviene mantener, reforzar, reducir o salir, basándote en el contexto actual del mercado.
 
+TONO Y PRUDENCIA (MUY IMPORTANTE): Nunca des órdenes directas ni hables con falsa certeza. Esto NO es asesoramiento financiero, es información para que la persona decida. Reglas de lenguaje:
+- En vez de "Vendé 70%" o "Salí completamente", usá "Podrías considerar reducir esta posición para alinearla con tu perfil" o "Quizás convenga revisar tu exposición acá".
+- NUNCA hagas predicciones de precios concretas ("puede caer 50%", "va a subir"). En vez de eso, describí el riesgo: "es un sector de alta volatilidad, lo que significa que su precio puede variar mucho en poco tiempo".
+- Evitá palabras alarmistas como "peligro crítico", "urgente", "HOY". Usá un tono calmado y profesional.
+- Siempre dejá claro que son consideraciones para que la persona evalúe, no instrucciones a seguir.
+
 IMPORTANTE — EDUCÁ AL INVERSOR: El inversor puede ser principiante. Cada vez que uses un término técnico (diversificación, volatilidad, concentración, correlación, etc.), explicalo en lenguaje SIMPLE y SIEMPRE en contexto de SU cartera real (no definiciones genéricas). Ejemplo: en vez de "está poco diversificado", decí "tenés el 65% en tecnología — eso se llama estar 'poco diversificado', y significa que si el sector tech cae, tu cartera cae con él". Hablale como a alguien que está aprendiendo, sin tratarlo de tonto.
 
 Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
@@ -655,6 +661,13 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
   "score_general": 7.5,
   "diversificacion": "Alta" | "Media" | "Baja",
   "riesgo_real": "Conservador" | "Moderado" | "Agresivo",
+  "desglose_score": {
+    "sectores": [{"nombre": "Tecnología", "porcentaje": 72}, {"nombre": "Energía", "porcentaje": 6}, {"nombre": "Otros", "porcentaje": 22}],
+    "top_posicion": {"ticker": "AMZN", "porcentaje": 18.5},
+    "top3_concentracion": 47,
+    "perfil_declarado": "${risk}",
+    "riesgo_estimado": "Alto"
+  },
   "resumen_general": "2-3 oraciones sobre el estado general del portafolio que ves en la imagen",
   "posiciones": [
     {
@@ -672,7 +685,9 @@ Respondé ÚNICAMENTE con un JSON con esta estructura (sin markdown):
   "alerta": "Alerta urgente si la hay, o null"
 }
 
-NOTA sobre conceptos_clave: incluí 2 o 3 conceptos que de verdad aparezcan en el análisis de ESTA cartera (los más relevantes para que el inversor entienda su situación). No conceptos genéricos al azar — los que le sirven para entender SU cartera.`;
+NOTA sobre conceptos_clave: incluí 2 o 3 conceptos que de verdad aparezcan en el análisis de ESTA cartera (los más relevantes para que el inversor entienda su situación). No conceptos genéricos al azar — los que le sirven para entender SU cartera.
+
+NOTA sobre desglose_score (CLAVE para la confianza): calculá los porcentajes REALES a partir de los montos que ves en la cartera. El % por sector debe sumar ~100. top_posicion es la posición más grande y qué % del total representa. top3_concentracion es qué % suman las 3 posiciones más grandes juntas. riesgo_estimado es tu evaluación (Bajo/Medio/Alto). Estos números son lo que justifica el score, así que tienen que salir de los datos reales de la imagen, no inventados.`;
   try {
     const response = await fetch(backendUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, images: selectedImages.map(img => ({ data: img.data, type: img.type })), useWebSearch: true }) });
     if (!response.ok) throw new Error(`Error ${response.status}`);
@@ -696,6 +711,32 @@ function renderPortfolio(d) {
   const conceptosHTML = (d.conceptos_clave || []).map(c => `<div class="insight-item" style="background:var(--coral-soft);border-color:var(--coral-soft);"><div style="flex:1;"><div class="insight-title" style="color:var(--navy);">${c.termino}</div><div class="insight-text" style="margin-top:4px;">${c.explicacion}</div></div></div>`).join('');
   const conceptosSection = (d.conceptos_clave && d.conceptos_clave.length) ? `<div class="ideas-label fade-up" style="margin-top:34px;">Para entender tu cartera</div><div style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:16px;margin-top:-8px;">Términos clave explicados con tus propios datos</div><div class="insights-list" style="margin-bottom:0;">${conceptosHTML}</div>` : '';
   const alertHTML = d.alerta ? `<div class="risk-banner fade-up-d3" style="margin-bottom:34px;"><div class="risk-icon"></div><div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div></div>` : '';
+  // Desglose transparente del score (la evidencia detrás del número)
+  let desgloseHTML = '';
+  if (d.desglose_score) {
+    const ds = d.desglose_score;
+    const sectorColors = ['var(--navy)', 'var(--coral)', 'var(--gold)', 'var(--ink-faint)', 'var(--up)'];
+    const sectoresRows = (ds.sectores || []).map((s, i) => `
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:4px;"><span style="color:var(--ink);font-weight:500;">${s.nombre}</span><span style="font-family:'JetBrains Mono',monospace;color:var(--ink-soft);">${s.porcentaje}%</span></div>
+        <div style="height:7px;background:var(--line);border-radius:4px;overflow:hidden;"><div style="height:100%;width:${s.porcentaje}%;background:${sectorColors[i % sectorColors.length]};border-radius:4px;"></div></div>
+      </div>`).join('');
+    const perfilMatch = ds.perfil_declarado && ds.riesgo_estimado && ds.perfil_declarado.toLowerCase() !== ds.riesgo_estimado.toLowerCase();
+    desgloseHTML = `
+      <div class="ideas-label fade-up">Cómo llegamos a este score</div>
+      <div style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:16px;margin-top:-8px;">Los datos reales de tu cartera detrás del número</div>
+      <div class="config-card fade-up" style="margin-bottom:34px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint);margin-bottom:14px;">Distribución por sector</div>
+        ${sectoresRows}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line);">
+          ${ds.top_posicion ? `<div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Posición más grande</div><div style="font-size:0.95rem;color:var(--ink);font-weight:600;">${ds.top_posicion.ticker} · ${ds.top_posicion.porcentaje}%</div></div>` : ''}
+          ${ds.top3_concentracion != null ? `<div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Top 3 posiciones</div><div style="font-size:0.95rem;color:var(--ink);font-weight:600;">${ds.top3_concentracion}% del total</div></div>` : ''}
+          ${ds.perfil_declarado ? `<div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Tu perfil declarado</div><div style="font-size:0.95rem;color:var(--ink);font-weight:600;text-transform:capitalize;">${ds.perfil_declarado}</div></div>` : ''}
+          ${ds.riesgo_estimado ? `<div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Riesgo estimado real</div><div style="font-size:0.95rem;font-weight:600;color:${perfilMatch ? 'var(--down)' : 'var(--ink)'};">${ds.riesgo_estimado}</div></div>` : ''}
+        </div>
+        ${perfilMatch ? `<div style="margin-top:16px;padding:12px 15px;background:var(--down-soft);border-radius:10px;font-size:0.82rem;color:var(--ink);">Tu perfil declarado es <strong style="text-transform:capitalize;">${ds.perfil_declarado}</strong> pero tu cartera muestra un riesgo <strong>${ds.riesgo_estimado}</strong>. Esa diferencia es parte de por qué el score no es más alto.</div>` : ''}
+      </div>`;
+  }
   const output = document.getElementById('portfolio-output');
   output.innerHTML = `
     <div class="portfolio-summary fade-up">
@@ -704,6 +745,7 @@ function renderPortfolio(d) {
       <div class="portfolio-metric"><div class="pm-label">Riesgo Real</div><div class="pm-value" style="font-size:1.3rem;">${d.riesgo_real}</div></div>
     </div>
     <div class="summary-block fade-up" style="margin-bottom:34px;">${d.resumen_general}</div>
+    ${desgloseHTML}
     ${alertHTML}
     <div class="ideas-label fade-up">Análisis por posición</div>
     <div class="position-analysis-list">${positionsHTML}</div>
