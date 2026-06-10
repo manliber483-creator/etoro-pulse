@@ -5,18 +5,25 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!process.env.ANTHROPIC_API_KEY) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
-  const { prompt, image, imageType } = req.body;
+  const { prompt, image, imageType, images } = req.body;
   let content;
-  if (image) {
+  // Soporta varias imágenes (images: array de {data, type}) o una sola (image, imageType) por compatibilidad
+  let imageList = [];
+  if (Array.isArray(images) && images.length > 0) {
+    imageList = images.slice(0, 3); // tope de 3 imágenes para controlar costo
+  } else if (image) {
+    imageList = [{ data: image, type: imageType }];
+  }
+  if (imageList.length > 0) {
     content = [
-      { type: 'image', source: { type: 'base64', media_type: imageType || 'image/png', data: image } },
+      ...imageList.map(img => ({ type: 'image', source: { type: 'base64', media_type: img.type || 'image/png', data: img.data } })),
       { type: 'text', text: prompt }
     ];
   } else {
     content = prompt;
   }
   // Web search solo para informes (no para análisis de imagen)
-  const useSearch = !image;
+  const useSearch = imageList.length === 0;
   // max_uses limita cuántas búsquedas hace Claude → controla el costo
   const tools = useSearch ? [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }] : undefined;
   try {
