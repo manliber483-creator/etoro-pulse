@@ -263,11 +263,11 @@
   <div class="badge-live"><div class="pulse"></div> Análisis con IA</div>
 </header>
 <div class="tabs-wrapper">
-  <button class="tab-btn active" onclick="switchTab('report')">Informe Semanal</button>
-  <button class="tab-btn" onclick="switchTab('portfolio')">Mi Cartera</button>
+  <button class="tab-btn active" onclick="switchTab('portfolio')">Mi Cartera</button>
+  <button class="tab-btn" onclick="switchTab('report')">Informe Semanal</button>
 </div>
 <main>
-  <div class="tab-panel active" id="tab-report">
+  <div class="tab-panel" id="tab-report">
     <div class="section-header">
       <div class="eyebrow">Inteligencia de mercado</div>
       <h1 class="section-title">Entendé qué pasa<br>en el mercado, <span class="accent">en serio</span></h1>
@@ -347,11 +347,17 @@
     </div>
     <div class="report-output" id="report-output"></div>
   </div>
-  <div class="tab-panel" id="tab-portfolio">
+  <div class="tab-panel active" id="tab-portfolio">
     <div class="section-header">
-      <div class="eyebrow">Análisis de cartera</div>
-      <h1 class="section-title">Subí una foto<br>y entendé <span class="accent">qué tenés</span></h1>
-      <p class="section-desc">Sacá una captura de tu cartera — de eToro, IOL, Balanz, Binance o donde inviertas — y la IA te dice qué está bien, qué cambiar y de qué conviene salir. <strong>En lenguaje claro.</strong></p>
+      <div class="eyebrow">Análisis de cartera con IA</div>
+      <h1 class="section-title">¿Tu cartera está bien armada<br>o estás <span class="accent">arriesgando de más</span>?</h1>
+      <p class="section-desc">Subí una captura de tu cartera — de eToro, IOL, Balanz, Binance o donde inviertas — y obtené al instante un análisis con score, diversificación, riesgos y qué revisar. <strong>En español simple, sin jerga.</strong></p>
+      <div class="how-it-works">
+        <div class="hiw-item"><span class="hiw-icon">📸</span><span>Subís una foto</span></div>
+        <div class="hiw-item"><span class="hiw-icon">🧠</span><span>La IA la analiza</span></div>
+        <div class="hiw-item"><span class="hiw-icon">⚡</span><span>Resultado en segundos</span></div>
+        <div class="hiw-item"><span class="hiw-icon">🇦🇷</span><span>En español simple</span></div>
+      </div>
     </div>
     <div class="portfolio-form">
       <div class="config-grid" style="margin-bottom:26px;">
