@@ -247,11 +247,11 @@
   }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   .fade-up { animation: fadeUp 0.5s ease forwards; }
-  .fade-up-d1 { animation: fadeUp 0.5s 0.06s ease forwards; opacity: 0; }
-  .fade-up-d2 { animation: fadeUp 0.5s 0.12s ease forwards; opacity: 0; }
-  .fade-up-d3 { animation: fadeUp 0.5s 0.18s ease forwards; opacity: 0; }
-  .fade-up-d4 { animation: fadeUp 0.5s 0.24s ease forwards; opacity: 0; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  .fade-up-d1 { animation: fadeUp 0.5s 0.06s ease forwards; }
+  .fade-up-d2 { animation: fadeUp 0.5s 0.12s ease forwards; }
+  .fade-up-d3 { animation: fadeUp 0.5s 0.18s ease forwards; }
+  .fade-up-d4 { animation: fadeUp 0.5s 0.24s ease forwards; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .fade-up, .fade-up-d1, .fade-up-d2, .fade-up-d3, .fade-up-d4 { opacity: 1 !important; transform: none !important; } }
 </style>
 </head>
 <body>
