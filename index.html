@@ -27,42 +27,31 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-  /* soft warm gradient atmosphere */
   body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(1200px 600px at 85% -10%, rgba(28,61,90,0.06), transparent 60%), radial-gradient(900px 500px at 0% 100%, rgba(240,101,74,0.05), transparent 55%); pointer-events: none; z-index: 0; }
-
-  /* ── HEADER ── */
   header { position: relative; z-index: 10; display: flex; align-items: center; justify-content: space-between; padding: 22px 40px; border-bottom: 1px solid var(--line); background: rgba(245,243,238,0.85); backdrop-filter: blur(16px); }
   .logo { display: flex; align-items: center; gap: 11px; }
   .logo-mark { width: 38px; height: 38px; border-radius: 11px; background: var(--navy); display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 4px 14px rgba(28,61,90,0.22); }
   .logo-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.45rem; letter-spacing: -0.5px; color: var(--ink); }
   .logo-name b { color: var(--coral); font-weight: 600; }
-
-  /* ── TABS ── */
   .tabs-wrapper { position: relative; z-index: 10; display: flex; gap: 4px; padding: 0 40px; border-bottom: 1px solid var(--line); background: rgba(245,243,238,0.7); }
   .tab-btn { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--ink-faint); background: none; border: none; border-bottom: 2.5px solid transparent; padding: 16px 22px; cursor: pointer; transition: color 0.2s, border-color 0.2s; }
   .tab-btn:hover { color: var(--ink); }
   .tab-btn.active { color: var(--navy); border-bottom-color: var(--coral); }
-
   main { position: relative; z-index: 5; max-width: 1080px; margin: 0 auto; padding: 48px 40px 90px; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; animation: fadeUp 0.5s ease; }
-
-  /* ── HERO / SECTION HEADER ── */
   .section-header { margin-bottom: 36px; }
   .eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--coral); margin-bottom: 14px; }
   .section-title { font-family: 'Fraunces', serif; font-size: 2.7rem; font-weight: 600; letter-spacing: -1.2px; line-height: 1.05; color: var(--ink); }
   .section-title .accent { font-style: italic; color: var(--navy); }
   .section-desc { color: var(--ink-soft); font-size: 1rem; margin-top: 14px; line-height: 1.65; max-width: 580px; }
   .section-desc strong { color: var(--ink); font-weight: 600; }
-
   .how-it-works { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
   .hiw-item { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 15px; font-size: 0.82rem; color: var(--ink-soft); font-weight: 500; }
   .hiw-icon { font-size: 1rem; }
   .sources-strip { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .sources-label { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-faint); margin-right: 4px; }
   .source-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; color: var(--navy); background: var(--surface); border: 1px solid var(--line); padding: 4px 11px; border-radius: 30px; }
-
-  /* ── DEMO PREVIEW ── */
   .demo-preview { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px 26px; margin-bottom: 26px; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .demo-label { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 16px; }
   .demo-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); }
@@ -73,25 +62,19 @@
   .demo-badge.bull { background: var(--up-soft); color: var(--up); }
   .demo-badge.bear { background: var(--down-soft); color: var(--down); }
   .demo-badge.neut { background: #eef1f6; color: var(--navy); }
-
-  /* ── CARDS ── */
   .config-card, .portfolio-form { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 30px; margin-bottom: 26px; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .config-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 22px; margin-bottom: 26px; }
   .config-group label { font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-faint); display: block; margin-bottom: 9px; }
   .config-group select, .config-group input { width: 100%; background: var(--surface2); border: 1px solid var(--line); color: var(--ink); padding: 11px 14px; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
   .config-group select:focus, .config-group input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(28,61,90,0.08); }
-
   .focus-chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chip { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 7px 15px; border-radius: 30px; border: 1px solid var(--line); background: var(--surface2); color: var(--ink-soft); cursor: pointer; transition: all 0.15s; user-select: none; }
   .chip:hover { border-color: var(--navy); color: var(--navy); }
   .chip.active { background: var(--navy); border-color: var(--navy); color: #fff; }
-
   .btn-generate { width: 100%; padding: 16px; background: var(--coral); color: #fff; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.2px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 6px 18px rgba(240,101,74,0.28); }
   .btn-generate:hover { background: #e2563c; transform: translateY(-1px); box-shadow: 0 10px 26px rgba(240,101,74,0.34); }
   .btn-generate:active { transform: translateY(0); }
   .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  /* ── LOADING ── */
   .loading-state { display: none; text-align: center; padding: 50px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; margin-top: 26px; }
   .loading-state.visible { display: block; }
   .loading-spinner { width: 42px; height: 42px; border: 3px solid var(--line); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 22px; }
@@ -100,36 +83,28 @@
   .loading-step { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--ink-faint); transition: color 0.3s; }
   .loading-step.active { color: var(--coral); }
   .loading-step.done { color: var(--ink-faint); text-decoration: line-through; opacity: 0.6; }
-
   .report-output, .portfolio-output { margin-top: 26px; display: none; }
   .report-output.visible, .portfolio-output.visible { display: block; }
-
   .report-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
   .report-date { font-family: 'JetBrains Mono', monospace; font-size: 0.76rem; color: var(--ink-faint); }
   .sentiment-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 7px 15px; border-radius: 30px; letter-spacing: 0.5px; font-weight: 500; }
   .sentiment-badge.bullish { background: var(--up-soft); color: var(--up); }
   .sentiment-badge.bearish { background: var(--down-soft); color: var(--down); }
   .sentiment-badge.neutral { background: #eef1f6; color: var(--navy); }
-
-  /* ── SIGNATURE: verdict headline ── */
   .frase-resumen { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 500; line-height: 1.3; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 26px 30px; margin-bottom: 24px; position: relative; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
-  .frase-resumen::before { content: '“'; font-family: 'Fraunces', serif; position: absolute; top: 2px; left: 14px; font-size: 3rem; color: var(--coral); opacity: 0.32; }
+  .frase-resumen::before { content: '\201C'; font-family: 'Fraunces', serif; position: absolute; top: 2px; left: 14px; font-size: 3rem; color: var(--coral); opacity: 0.32; }
   .frase-resumen em { font-style: italic; color: var(--navy); }
-
   .cambios-block { background: var(--surface2); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-bottom: 22px; }
   .cambios-title { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
   .cambio-item { font-size: 0.86rem; color: var(--ink-soft); padding: 5px 0; border-bottom: 1px solid var(--line); line-height: 1.5; }
   .cambio-item:last-child { border-bottom: none; }
-
   .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 34px; }
   .metric-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .metric-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
   .metric-value { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 600; color: var(--ink); }
   .metric-value.up { color: var(--up); }
   .metric-value.down { color: var(--down); }
-
   .summary-block { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--navy); border-radius: 14px; padding: 22px 26px; margin-bottom: 34px; font-size: 0.95rem; line-height: 1.75; color: var(--ink-soft); }
-
   .ideas-label { font-family: 'Fraunces', serif; font-size: 1.35rem; font-weight: 600; letter-spacing: -0.4px; margin-bottom: 18px; color: var(--ink); }
   .ideas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 34px; }
   .idea-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
@@ -160,7 +135,6 @@
   .insight-link { font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; color: var(--navy); text-decoration: none; border: 1px solid var(--line); padding: 4px 11px; border-radius: 30px; transition: all 0.15s; }
   .insight-link:hover { background: var(--surface2); border-color: var(--navy); }
   .idea-source-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--navy); background: var(--surface2); border: 1px solid var(--line); padding: 3px 9px; border-radius: 30px; }
-
   .score-table { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; margin-bottom: 34px; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .score-table-title { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 600; color: var(--ink); margin-bottom: 16px; }
   .score-row { display: grid; grid-template-columns: 28px 64px 1fr 130px 42px; align-items: center; gap: 13px; padding: 9px 0; border-bottom: 1px solid var(--line); }
@@ -171,12 +145,10 @@
   .score-bar-wrap { height: 7px; background: var(--line); border-radius: 4px; overflow: hidden; }
   .score-bar { height: 100%; border-radius: 4px; transition: width 0.8s ease; }
   .score-num { font-family: 'JetBrains Mono', monospace; font-size: 0.84rem; font-weight: 500; text-align: right; }
-
   .perfil-block { display: flex; align-items: flex-start; gap: 15px; background: var(--coral-soft); border-radius: 16px; padding: 20px 24px; margin-bottom: 34px; }
   .perfil-icon { font-size: 1.3rem; }
   .perfil-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--coral); margin-bottom: 5px; font-weight: 500; }
   .perfil-text { font-size: 0.9rem; color: var(--ink); line-height: 1.6; }
-
   .insights-list { display: flex; flex-direction: column; gap: 11px; margin-bottom: 34px; }
   .insight-item { display: flex; align-items: flex-start; gap: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 13px; padding: 16px 20px; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .insight-num { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: var(--coral); min-width: 24px; }
@@ -187,16 +159,12 @@
   .insight-bullet-impact { color: var(--up); font-weight: 500; }
   .insight-source { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); }
   .insight-source-row { display: flex; align-items: center; gap: 8px; }
-
   .risk-banner { background: var(--down-soft); border-radius: 16px; padding: 18px 22px; display: flex; gap: 15px; align-items: flex-start; margin-bottom: 34px; }
   .risk-icon { font-size: 1.3rem; }
   .risk-title { font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--down); margin-bottom: 5px; font-weight: 500; }
   .risk-text { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
-
   .sectors-row { display: flex; flex-wrap: wrap; gap: 9px; }
   .sector-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.74rem; padding: 7px 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 30px; color: var(--ink); }
-
-  /* ── PORTFOLIO ── */
   .portfolio-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 34px; }
   .portfolio-metric { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; text-align: center; box-shadow: 0 1px 3px rgba(22,35,58,0.04); }
   .portfolio-metric .pm-label { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 9px; }
@@ -213,12 +181,10 @@
   .pa-verdict.reforzar { background: var(--up-soft); color: var(--up); }
   .pa-verdict.reducir { background: #fdf3e0; color: var(--gold); }
   .pa-verdict.salir { background: var(--down-soft); color: var(--down); }
-
   .disclaimer { display: flex; gap: 15px; align-items: flex-start; background: var(--surface2); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; margin-top: 52px; }
   .disclaimer-icon { font-size: 1.05rem; margin-top: 2px; }
   .disclaimer-text { font-size: 0.78rem; color: var(--ink-faint); line-height: 1.65; }
   .disclaimer-text strong { color: var(--ink-soft); }
-
   .drop-zone { border: 2px dashed var(--line); border-radius: 16px; padding: 52px 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface2); }
   .drop-zone:hover, .drop-zone.dragover { border-color: var(--coral); background: var(--coral-soft); }
   .drop-zone-icon { font-size: 2.6rem; margin-bottom: 14px; }
@@ -228,7 +194,15 @@
   .img-preview-wrapper img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 14px; border: 1px solid var(--line); }
   .btn-remove-img { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); border: 1px solid var(--line); color: var(--down); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 7px 13px; border-radius: 9px; cursor: pointer; transition: all 0.2s; }
   .btn-remove-img:hover { background: var(--down-soft); }
-
+  .etoro-connect { background: linear-gradient(135deg, var(--navy), var(--navy-deep)); border-radius: 18px; padding: 26px 30px; margin-bottom: 26px; color: #fff; }
+  .etoro-connect-title { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 6px; }
+  .etoro-connect-sub { font-size: 0.86rem; opacity: 0.8; line-height: 1.5; margin-bottom: 18px; }
+  .btn-etoro { width: 100%; padding: 15px; background: #fff; color: var(--navy); font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.92rem; border: none; border-radius: 11px; cursor: pointer; transition: all 0.2s; }
+  .btn-etoro:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,0.18); }
+  .btn-etoro:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .or-divider { display: flex; align-items: center; gap: 14px; margin: 26px 0; }
+  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+  .or-divider span { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint); }
   @media (max-width: 768px) {
     header { padding: 16px 20px; }
     main { padding: 30px 20px 60px; }
@@ -352,9 +326,9 @@
     <div class="section-header">
       <div class="eyebrow">Análisis de cartera con IA</div>
       <h1 class="section-title">¿Tu cartera está bien armada<br>o estás <span class="accent">arriesgando de más</span>?</h1>
-      <p class="section-desc">Subí una captura de tu cartera — de eToro, IOL, Balanz, Binance o donde inviertas — y obtené al instante un análisis con score, diversificación, riesgos y qué revisar. <strong>En español simple, sin jerga.</strong></p>
+      <p class="section-desc">Conectá tu cuenta de eToro y analizá tu cartera automáticamente, o subí una captura de cualquier broker — IOL, Balanz, Binance. Obtené al instante un análisis con score, diversificación, riesgos y qué revisar. <strong>En español simple, sin jerga.</strong></p>
       <div class="how-it-works">
-        <div class="hiw-item"><span>Subís una foto</span></div>
+        <div class="hiw-item"><span>Conectás eToro o subís foto</span></div>
         <div class="hiw-item"><span>La IA la analiza</span></div>
         <div class="hiw-item"><span>Resultado en segundos</span></div>
         <div class="hiw-item"><span>En español simple</span></div>
@@ -383,6 +357,12 @@
           <input type="text" id="portfolio-comment" placeholder="Ej: quiero reducir riesgo">
         </div>
       </div>
+      <div class="etoro-connect">
+        <div class="etoro-connect-title">Conectá tu cuenta de eToro</div>
+        <div class="etoro-connect-sub">Leemos tu cartera automáticamente y la analizamos. Sin capturas, sin cargar nada a mano.</div>
+        <button class="btn-etoro" id="btn-etoro" onclick="analyzeEtoro()">Leer y analizar mi cartera de eToro</button>
+      </div>
+      <div class="or-divider"><span>o subí una captura</span></div>
       <div class="drop-zone" id="drop-zone" onclick="document.getElementById('img-input').click()">
         <input type="file" id="img-input" accept="image/*" multiple style="display:none" onchange="handleImageSelect(event)">
         <div class="drop-zone-icon" style="font-size:1.4rem;color:var(--coral);">↑</div>
@@ -395,7 +375,7 @@
     <div class="loading-state" id="portfolio-loading">
       <div class="loading-spinner"></div>
       <div class="loading-steps">
-        <div class="loading-step" id="pstep-1">Procesando tu captura...</div>
+        <div class="loading-step" id="pstep-1">Procesando tu cartera...</div>
         <div class="loading-step" id="pstep-2">Consultando contexto de mercado actual...</div>
         <div class="loading-step" id="pstep-3">Evaluando riesgo y diversificación...</div>
         <div class="loading-step" id="pstep-4">Generando recomendaciones...</div>
@@ -431,6 +411,7 @@ function animateLoadingSteps(prefix, count) {
   return interval;
 }
 const BACKEND_URL = 'https://miportiq.vercel.app/api/report';
+const ETORO_URL = 'https://miportiq.vercel.app/api/etoro';
 function getBackendUrl() { return BACKEND_URL; }
 function extractJSON(text) {
   if (!text) return null;
@@ -577,7 +558,7 @@ async function loadStocktwits(ticker) {
     el.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;width:100%;"><div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">STOCKTWITS</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:${color};">${bullPct}% bullish</span></div><div style="height:4px;background:var(--line);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${bullPct}%;background:${color};border-radius:2px;transition:width 0.8s ease;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--ink-faint);">${bullish} · ${bearish} · ${messages.length} msgs</div></div>`;
   } catch { el.innerHTML = `<span style="color:var(--ink-faint);font-family:'JetBrains Mono',monospace;font-size:0.6rem;">Stocktwits no disponible</span>`; }
 }
-let selectedImages = []; // array de {data, type, src}
+let selectedImages = [];
 const MAX_IMAGES = 3;
 function handleImageSelect(event) {
   const files = Array.from(event.target.files || []);
@@ -704,6 +685,74 @@ NOTA sobre desglose_score (CLAVE para la confianza): calculá los porcentajes RE
     output.classList.add('visible');
   }
 }
+async function analyzeEtoro() {
+  const backendUrl = getBackendUrl();
+  if (!backendUrl) return;
+  const risk = document.getElementById('portfolio-risk').value;
+  const horizon = document.getElementById('portfolio-horizon').value;
+  const comment = document.getElementById('portfolio-comment').value;
+  const btn = document.getElementById('btn-etoro');
+  const loading = document.getElementById('portfolio-loading');
+  const output = document.getElementById('portfolio-output');
+  btn.disabled = true; loading.classList.add('visible'); output.classList.remove('visible'); output.innerHTML = '';
+  const stepInterval = animateLoadingSteps('pstep-', 4);
+  try {
+    const etoroRes = await fetch(ETORO_URL, { method: 'POST' });
+    if (!etoroRes.ok) throw new Error(`No se pudo leer la cartera de eToro (${etoroRes.status})`);
+    const cartera = await etoroRes.json();
+    if (!cartera.positions || cartera.positions.length === 0) throw new Error('La cartera de eToro no tiene posiciones para analizar.');
+    const carteraTexto = cartera.positions.map(p => `- ${p.nombre} (${p.ticker || 'N/D'}): USD ${p.invertido_usd}, ${p.porcentaje_cartera}% de la cartera, ${p.tipo}, precio apertura ${p.precio_apertura}`).join('\n');
+    const prompt = `Sos un analista financiero senior. El inversor conectó su cuenta de eToro y esta es su cartera REAL (datos exactos de la API):
+
+CARTERA (total invertido USD ${cartera.total_invertido_usd}, crédito disponible USD ${cartera.credito_disponible}):
+${carteraTexto}
+
+CONTEXTO: Perfil ${risk}, horizonte ${horizon}, fecha ${new Date().toLocaleDateString('es-AR', {weekday:'long',year:'numeric',month:'long',day:'numeric'})}.${comment ? ` Comentario: "${comment}"` : ''}
+
+Analizá las posiciones (datos reales, usá los % que te di). Para cada una: mantener, reforzar, reducir o salir, según el mercado actual.
+
+TONO Y PRUDENCIA: No des órdenes ni certezas. No es asesoramiento financiero. En vez de "Vendé" usá "Podrías considerar reducir". Nunca prediga precios; describí el riesgo. Tono calmado. Siempre aclarar que son consideraciones para que decida la persona.
+
+EDUCÁ AL INVERSOR: Puede ser principiante. Explicá cada término técnico (diversificación, volatilidad, concentración) en lenguaje simple y en contexto de SU cartera real. Ej: "tenés el 67% en tecnología — eso es estar poco diversificado, si el sector cae tu cartera cae con él".
+
+Respondé SOLO con JSON (sin markdown):
+{
+  "score_general": 7.5,
+  "diversificacion": "Alta" | "Media" | "Baja",
+  "riesgo_real": "Conservador" | "Moderado" | "Agresivo",
+  "desglose_score": {
+    "sectores": [{"nombre": "Tecnología", "porcentaje": 67}, {"nombre": "Energía", "porcentaje": 17}],
+    "top_posicion": {"ticker": "GOOG", "porcentaje": 16.7},
+    "top3_concentracion": 50,
+    "perfil_declarado": "${risk}",
+    "riesgo_estimado": "Alto"
+  },
+  "resumen_general": "2-3 oraciones sobre la cartera",
+  "posiciones": [
+    {"ticker": "AMZN", "nombre": "Amazon.com Inc", "verdict": "mantener", "analisis": "2-3 oraciones con contexto actual", "razon": "Razón en una línea"}
+  ],
+  "recomendaciones": ["Reco 1", "Reco 2", "Reco 3"],
+  "conceptos_clave": [{"termino": "Diversificación", "explicacion": "Explicación simple con SUS datos, máx 2 oraciones"}],
+  "alerta": "Alerta si la hay, o null"
+}
+
+desglose_score: % por sector reales (suman ~100), top_posicion la más grande, top3_concentracion lo que suman las 3 más grandes, riesgo_estimado tu evaluación.
+conceptos_clave: 2-3 que apliquen a ESTA cartera.`;
+    const response = await fetch(backendUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+    if (!response.ok) throw new Error(`Error ${response.status}`);
+    const data = await response.json();
+    const text = data.content || data.text || data.result || '';
+    clearInterval(stepInterval); loading.classList.remove('visible'); btn.disabled = false;
+    let parsed;
+    try { parsed = extractJSON(text); if (!parsed) throw new Error('no-json'); }
+    catch { output.innerHTML = `<div class="summary-block">${text.replace(/\n/g,'<br>')}</div>`; output.classList.add('visible'); return; }
+    renderPortfolio(parsed);
+  } catch (err) {
+    clearInterval(stepInterval); loading.classList.remove('visible'); btn.disabled = false;
+    output.innerHTML = `<div class="risk-banner"><div class="risk-icon"></div><div><div class="risk-title">Error</div><div class="risk-text">${err.message}</div></div></div>`;
+    output.classList.add('visible');
+  }
+}
 function renderPortfolio(d) {
   const scoreClass = d.score_general >= 7 ? 'score-high' : d.score_general >= 5 ? 'score-mid' : 'score-low';
   const positionsHTML = (d.posiciones || []).map(p => `<div class="position-analysis-card fade-up-d1"><div class="pa-ticker-block"><div class="pa-ticker">${p.ticker}</div><div style="font-family:'Inter',sans-serif;font-size:0.76rem;color:var(--ink-faint);margin-top:2px;">${p.nombre || ''}</div><div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--ink-faint);margin-top:6px;">${p.razon}</div></div><div class="pa-analysis">${p.analisis}</div><div class="pa-verdict ${p.verdict}">${p.verdict.toUpperCase()}</div></div>`).join('');
@@ -711,7 +760,6 @@ function renderPortfolio(d) {
   const conceptosHTML = (d.conceptos_clave || []).map(c => `<div class="insight-item" style="background:var(--coral-soft);border-color:var(--coral-soft);"><div style="flex:1;"><div class="insight-title" style="color:var(--navy);">${c.termino}</div><div class="insight-text" style="margin-top:4px;">${c.explicacion}</div></div></div>`).join('');
   const conceptosSection = (d.conceptos_clave && d.conceptos_clave.length) ? `<div class="ideas-label fade-up" style="margin-top:34px;">Para entender tu cartera</div><div style="font-size:0.85rem;color:var(--ink-faint);margin-bottom:16px;margin-top:-8px;">Términos clave explicados con tus propios datos</div><div class="insights-list" style="margin-bottom:0;">${conceptosHTML}</div>` : '';
   const alertHTML = d.alerta ? `<div class="risk-banner fade-up-d3" style="margin-bottom:34px;"><div class="risk-icon"></div><div><div class="risk-title">Alerta</div><div class="risk-text">${d.alerta}</div></div></div>` : '';
-  // Desglose transparente del score (la evidencia detrás del número)
   let desgloseHTML = '';
   if (d.desglose_score) {
     const ds = d.desglose_score;
